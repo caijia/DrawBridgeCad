@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -69,7 +68,6 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
     private int textRectSpaceY;
     private int radius;
     private PaintParams paintParams = new PaintParams();
-    private Path path = new Path();
 
     public BaseBridgeView(Context context) {
         this(context, null);
@@ -193,7 +191,7 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
         restorePaintParams();
 
         //绘制文字
-        drawText(canvas, "绘制", spToPx(20));
+        drawText(canvas, "绘制", viewWidth / 2, viewHeight / 2, spToPx(20));
     }
 
     /**
@@ -203,15 +201,42 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
      * @param text     文字
      * @param testSize 文字字体大小
      */
-    private void drawText(Canvas canvas, String text, float testSize) {
+    private void drawText(Canvas canvas, String text, int x, int y, float testSize) {
         //绘制文字边框
-        drawTextBounds(canvas, text, testSize);
+        drawTextBounds(canvas, text, x, y, testSize);
         //绘制文字
         drawActualText(canvas, text, testSize);
         //绘制文字关闭图标
         drawCloseTextIcon(canvas);
         //绘制文字操作图标
         drawHandleTextIcon(canvas);
+    }
+
+    /**
+     * 绘制文字边框
+     *
+     * @param canvas canvas
+     * @param text   文字
+     */
+    private void drawTextBounds(Canvas canvas, String text, int x, int y, float testSize) {
+        savePaintParams();
+        paint.setTextSize(testSize);
+        paint.setStrokeWidth(0);
+        int[] bounds = getTextBounds(text);
+        restorePaintParams();
+
+        textRect.set(
+                x - bounds[0] / 2,
+                y - bounds[1] / 2,
+                x + bounds[0] / 2,
+                y + bounds[1] / 2);
+        textRect.inset(-textRectSpaceX, -textRectSpaceY);
+        textRect.offset(xOffset, yOffset);
+
+        savePaintParams();
+        paint.setStyle(Paint.Style.STROKE);
+        canvas.drawRect(textRect, paint);
+        restorePaintParams();
     }
 
     /**
@@ -228,35 +253,6 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
         Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
         int baseline = (textRect.bottom + textRect.top - fontMetrics.bottom - fontMetrics.top) / 2;
         canvas.drawText(text, textRect.left + textRectSpaceX, baseline, paint);
-        restorePaintParams();
-    }
-
-    /**
-     * 绘制文字边框
-     *
-     * @param canvas canvas
-     * @param text   文字
-     */
-    private void drawTextBounds(Canvas canvas, String text, float testSize) {
-        int viewWidth = getWidth();
-        int viewHeight = getHeight();
-        savePaintParams();
-        paint.setTextSize(testSize);
-        paint.setStrokeWidth(0);
-        int[] bounds = getTextBounds(text);
-        restorePaintParams();
-
-        textRect.set(
-                (viewWidth - bounds[0]) / 2,
-                (viewHeight - bounds[1]) / 2,
-                (viewWidth + bounds[0]) / 2,
-                (viewHeight + bounds[1]) / 2);
-        textRect.inset(-textRectSpaceX, -textRectSpaceY);
-        textRect.offset(xOffset, yOffset);
-
-        savePaintParams();
-        paint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(textRect, paint);
         restorePaintParams();
     }
 
