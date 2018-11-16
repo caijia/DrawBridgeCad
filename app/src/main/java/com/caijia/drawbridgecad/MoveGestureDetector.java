@@ -57,9 +57,9 @@ public class MoveGestureDetector {
                         listener.onMoveGestureDoubleTap(event);
                     }
 
-                }else{
+                } else {
                     if (listener != null && listener.onMoveGestureBeginTap(event))
-                    handler.sendEmptyMessageDelayed(TAP, doubleTapTimeout);
+                        handler.sendEmptyMessageDelayed(TAP, doubleTapTimeout);
                 }
                 if (previousDownEvent != null) {
                     previousDownEvent.recycle();
@@ -94,7 +94,7 @@ public class MoveGestureDetector {
                     isBeginDragged = true;
                 }
                 if (listener != null) {
-                    listener.onMoveGestureScroll(event,dx, dy, distanceX, distanceY);
+                    listener.onMoveGestureScroll(event,pointerIndex, dx, dy, distanceX, distanceY);
                 }
                 lastTouchX = x;
                 lastTouchY = y;
@@ -110,7 +110,7 @@ public class MoveGestureDetector {
                 break;
             }
 
-            case MotionEvent.ACTION_CANCEL:{
+            case MotionEvent.ACTION_CANCEL: {
                 removeTap();
                 activePointerId = -1;
                 isBeginDragged = false;
@@ -163,7 +163,7 @@ public class MoveGestureDetector {
 
         int deltaX = (int) firstDown.getX() - (int) secondDown.getX();
         int deltaY = (int) firstDown.getY() - (int) secondDown.getY();
-        return Math.hypot(Math.abs(deltaX),Math.abs(deltaY)) < doubleTapSlop;
+        return Math.hypot(Math.abs(deltaX), Math.abs(deltaY)) < doubleTapSlop;
     }
 
     private void removeTap() {
@@ -171,9 +171,10 @@ public class MoveGestureDetector {
         inTapRegion = false;
     }
 
-    public interface OnMoveGestureListener{
+    public interface OnMoveGestureListener {
 
-        void onMoveGestureScroll(MotionEvent e, float dx, float dy, float distanceX, float distanceY);
+        void onMoveGestureScroll(MotionEvent e, int pointerIndex, float dx, float dy,
+                                 float distanceX, float distanceY);
 
         void onMoveGestureUpOrCancel(MotionEvent event);
 
