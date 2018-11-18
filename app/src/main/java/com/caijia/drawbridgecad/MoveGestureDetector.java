@@ -30,6 +30,9 @@ public class MoveGestureDetector {
     private boolean inTapRegion;
 
     private OnMoveGestureListener listener;
+    private MotionEvent downEvent;
+    private MotionEvent pointerDownEvent;
+    private MotionEvent actualDownEvent;
 
     public MoveGestureDetector(Context context, OnMoveGestureListener listener) {
         ViewConfiguration viewConfig = ViewConfiguration.get(context);
@@ -43,6 +46,8 @@ public class MoveGestureDetector {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
+                recyclerEvent(actualDownEvent);
+                actualDownEvent = downEvent = MotionEvent.obtain(event);
                 initialMotionX = lastTouchX = event.getX(0);
                 initialMotionY = lastTouchY = event.getY(0);
                 activePointerId = event.getPointerId(0);
@@ -70,6 +75,8 @@ public class MoveGestureDetector {
             }
 
             case MotionEvent.ACTION_POINTER_DOWN: {
+                recyclerEvent(actualDownEvent);
+                actualDownEvent = pointerDownEvent = MotionEvent.obtain(event);
                 removeTap();
                 int pointerIndex = event.getActionIndex();
                 activePointerId = event.getPointerId(pointerIndex);
@@ -94,7 +101,7 @@ public class MoveGestureDetector {
                     isBeginDragged = true;
                 }
                 if (listener != null) {
-                    listener.onMoveGestureScroll(event,pointerIndex, dx, dy, distanceX, distanceY);
+                    listener.onMoveGestureScroll(actualDownEvent, event, pointerIndex, dx, dy, distanceX, distanceY);
                 }
                 lastTouchX = x;
                 lastTouchY = y;
@@ -138,6 +145,8 @@ public class MoveGestureDetector {
                 int pointerIndex = event.getActionIndex();
                 if (event.getPointerId(pointerIndex) == activePointerId) {
                     int newIndex = pointerIndex == 0 ? 1 : 0;
+                    actualDownEvent = newIndex == 0 ? downEvent : pointerDownEvent;
+                    recyclerEvent(newIndex == 0 ? pointerDownEvent : downEvent);
                     activePointerId = event.getPointerId(newIndex);
                     lastTouchX = event.getX(newIndex);
                     lastTouchY = event.getY(newIndex);
@@ -146,6 +155,12 @@ public class MoveGestureDetector {
             }
         }
         return false;
+    }
+
+    private void recyclerEvent(MotionEvent event) {
+        if (event != null) {
+            event.recycle();
+        }
     }
 
     //源码判断android双击事件机制
@@ -173,8 +188,8 @@ public class MoveGestureDetector {
 
     public interface OnMoveGestureListener {
 
-        void onMoveGestureScroll(MotionEvent e, int pointerIndex, float dx, float dy,
-                                 float distanceX, float distanceY);
+        void onMoveGestureScroll(MotionEvent downEvent, MotionEvent currentEvent, int pointerIndex,
+                                 float dx, float dy, float distanceX, float distanceY);
 
         void onMoveGestureUpOrCancel(MotionEvent event);
 

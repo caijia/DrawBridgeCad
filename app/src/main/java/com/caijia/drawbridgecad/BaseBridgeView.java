@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -14,6 +13,7 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.Toast;
 
 /**
  * 桥涵的底图
@@ -23,24 +23,10 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
         MoveGestureDetector.OnMoveGestureListener {
 
     /**
-     * 关闭文字组件
-     */
-    private static final int ACTION_CLOSE_TEXT = 1;
-    /**
-     * 缩放+旋转文字组件
-     */
-    private static final int ACTION_SCALE_ROTATE_TEXT = 2;
-    /**
-     * 移动文字组件
-     */
-    private static final int ACTION_MOVE_TEXT = 3;
-
-    /**
      * 移动整个绘制的图形整体
      */
     private static final int ACTION_MOVE_SHAPE = 4;
 
-    RectF textRect = new RectF();
     private Paint paint;
     /**
      * 宽度
@@ -76,22 +62,14 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
     private int xOffset;
     private int yOffset;
     private ScaleGestureDetector scaleGestureDetector;
-    private int radius;
     private PaintParams paintParams = new PaintParams();
-    /**
-     * 文字圆形图标的颜色
-     */
-    private int circleIconColor;
-    private int textOffsetX;
-    private int textOffsetY;
-    private float textSize;
+
     private int action = -1;
     /**
      * 绘制图形的总区域
      */
     private RectF drawRect = new RectF();
-    private double textDegree;
-    private float textScale = 1;
+    private DrawTextComponent textComponent;
 
     public BaseBridgeView(Context context) {
         this(context, null);
@@ -116,7 +94,14 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
                 getContext().getResources().getDisplayMetrics());
     }
 
-    private void init(Context context, AttributeSet attrs) {
+    private void init(final Context context, AttributeSet attrs) {
+        textComponent = new DrawTextComponent(context);
+        textComponent.setOnCloseTextComponentListener(new DrawTextComponent.OnCloseTextComponentListener() {
+            @Override
+            public void closeTextComponent() {
+                Toast.makeText(context, "关闭Text", Toast.LENGTH_SHORT).show();
+            }
+        });
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setAntiAlias(true);
         paint.setColor(Color.WHITE);
@@ -126,9 +111,6 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
         scaleSize = (int) dpToPx(4);
         space = (int) dpToPx(8);
         textToScaleSize = (int) dpToPx(2);
-        radius = (int) dpToPx(8);
-        circleIconColor = Color.parseColor("#ddffffff");
-        textSize = spToPx(28);
 
         scaleGestureDetector = new ScaleGestureDetector(context, this);
         moveGestureDetector = new MoveGestureDetector(context, this);
@@ -171,7 +153,7 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
             savePaintParams();
             paint.setTextSize(spToPx(10));
             paint.setStrokeWidth(0);
-            int textHalfWidth = getTextBounds(i + unit)[0] / 2;
+            int textHalfWidth = getTextBounds(i + unit, paint)[0] / 2;
             canvas.drawText(
                     i + unit,
                     rectStartX + i * scale - textHalfWidth,
@@ -200,7 +182,7 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
             savePaintParams();
             paint.setTextSize(spToPx(10));
             paint.setStrokeWidth(0);
-            int textHalfHeight = getTextBounds(i + unit)[1] / 2;
+            int textHalfHeight = getTextBounds(i + unit, paint)[1] / 2;
             canvas.drawText(
                     i + unit,
                     rectEndX + space + scaleSize + textToScaleSize,
@@ -216,160 +198,12 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
         restorePaintParams();
 
         //绘制文字
-        drawText(canvas,
-                "绘制",
-                viewWidth / 2 + textOffsetX + xOffset,
-                viewHeight / 2 + textOffsetY + yOffset,
-                textSize, textScale, (float) textDegree);
-
-        savePaintParams();
-        paint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(getTextRbRect(), paint);
-        restorePaintParams();
+        textComponent.drawText(canvas, "绘制", viewWidth / 2, viewHeight / 2, spToPx(28), paint);
     }
 
-    /**
-     * 绘制文字组件,包含边框+操作按钮+关闭按钮+文字
-     *
-     * @param canvas   canvas
-     * @param text     文字
-     * @param centerX  x坐标
-     * @param centerY  y坐标
-     * @param testSize 文字字体大小
-     * @param scale    缩放
-     * @param degree   旋转角度
-     */
-    private void drawText(Canvas canvas, String text, int centerX, int centerY, float testSize,
-                          float scale, float degree) {
-        int saveTotal = canvas.save();
-        canvas.rotate(degree, centerX, centerY);
-        //绘制文字边框
-        drawTextBounds(canvas, text, centerX, centerY, testSize, scale);
-        //绘制文字
-        drawActualText(canvas, text, testSize, scale);
-        //绘制文字关闭图标
-        drawCloseTextIcon(canvas);
-        //绘制文字操作图标
-        drawHandleTextIcon(canvas);
-        canvas.restoreToCount(saveTotal);
-    }
-
-    /**
-     * 绘制文字边框
-     *
-     * @param canvas   canvas
-     * @param text     文字
-     * @param centerX  x坐标
-     * @param centerY  y坐标
-     * @param testSize 文字字体大小
-     * @param scale    缩放
-     */
-    private void drawTextBounds(Canvas canvas, String text, int centerX, int centerY,
-                                float testSize, float scale) {
-        savePaintParams();
-        paint.setTextSize(testSize * scale);
-        paint.setStrokeWidth(0);
-        int[] bounds = getTextBounds(text);
-        restorePaintParams();
-
-        textRect.set(
-                centerX - bounds[0] / 2,
-                centerY - bounds[1] / 2,
-                centerX + bounds[0] / 2,
-                centerY + bounds[1] / 2);
-        textRect.inset(-radius, -radius);
-
-        savePaintParams();
-        paint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(
-                centerX - bounds[0] / 2 - radius,
-                centerY - bounds[1] / 2 - radius,
-                centerX + bounds[0] / 2 + radius,
-                centerY + bounds[1] / 2 + radius,
-                paint);
-        restorePaintParams();
-    }
-
-    /**
-     * 绘制文字
-     *
-     * @param canvas   canvas
-     * @param text     文字
-     * @param testSize 文字字体大小
-     * @param scale    缩放
-     */
-    private void drawActualText(Canvas canvas, String text, float testSize, float scale) {
-        savePaintParams();
-        paint.setTextSize(testSize * scale);
-        paint.setStrokeWidth(0);
-        Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
-        float baseline = (textRect.bottom + textRect.top - fontMetrics.bottom - fontMetrics.top) / 2;
-        canvas.drawText(text, textRect.left + radius, baseline, paint);
-        restorePaintParams();
-    }
-
-    /**
-     * 绘制关闭文字的图标
-     *
-     * @param canvas canvas
-     */
-    private void drawCloseTextIcon(Canvas canvas) {
-        //绘制文字左上角关闭图标
-        savePaintParams();
-        paint.setColor(circleIconColor);
-        canvas.drawCircle(textRect.left, textRect.top, radius, paint);
-        restorePaintParams();
-
-        //绘制关闭图标的X
-        savePaintParams();
-        paint.setColor(Color.GRAY);
-        float spacing = dpToPx(3);
-        float radiusSin45 = (float) (Math.sin(Math.toRadians(45)) * (radius - spacing));
-
-        canvas.drawLine(
-                textRect.left - radiusSin45,
-                textRect.top - radiusSin45,
-                textRect.left + radiusSin45,
-                textRect.top + radiusSin45,
-                paint);
-
-        canvas.drawLine(
-                textRect.left - radiusSin45,
-                textRect.top + radiusSin45,
-                textRect.left + radiusSin45,
-                textRect.top - radiusSin45,
-                paint);
-        restorePaintParams();
-    }
-
-    /**
-     * 绘制文字右下角的操作图标
-     *
-     * @param canvas canvas
-     */
-    private void drawHandleTextIcon(Canvas canvas) {
-        float spacing = dpToPx(3);
-        //绘制文字右下角操作图标
-        savePaintParams();
-        paint.setColor(circleIconColor);
-        canvas.drawCircle(textRect.right, textRect.bottom, radius, paint);
-        restorePaintParams();
-
-        savePaintParams();
-        paint.setColor(Color.GRAY);
-        int arrowWidth = (int) dpToPx(4);
-        float radiusSin45 = (float) (Math.sin(Math.toRadians(45)) * (radius - spacing));
-        float left = textRect.right - radiusSin45;
-        float top = textRect.bottom - radiusSin45;
-        float right = textRect.right + radiusSin45;
-        float bottom = textRect.bottom + radiusSin45;
-
-        canvas.drawLine(left, top, right, bottom, paint);
-        canvas.drawLine(left, top, left + arrowWidth, top, paint);
-        canvas.drawLine(left, top, left, top + arrowWidth, paint);
-        canvas.drawLine(right - arrowWidth, bottom, right, bottom, paint);
-        canvas.drawLine(right, bottom - arrowWidth, right, bottom, paint);
-        restorePaintParams();
+    private int[] getTextBounds(String text, Paint paint) {
+        paint.getTextBounds(text, 0, text.length(), textBounds);
+        return new int[]{textBounds.width(), textBounds.height()};
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -377,12 +211,8 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
     public boolean onTouchEvent(MotionEvent event) {
         scaleGestureDetector.onTouchEvent(event);
         moveGestureDetector.onTouchEvent(event);
+        textComponent.onTouchEvent(event);
         return true;
-    }
-
-    private int[] getTextBounds(String text) {
-        paint.getTextBounds(text, 0, text.length(), textBounds);
-        return new int[]{textBounds.width(), textBounds.height()};
     }
 
     @Override
@@ -404,27 +234,12 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
     }
 
     @Override
-    public void onMoveGestureScroll(MotionEvent e, int pointerIndex, float dx, float dy,
+    public void onMoveGestureScroll(MotionEvent downEvent, MotionEvent currentEvent,
+                                    int pointerIndex, float dx, float dy,
                                     float distanceX, float distanceY) {
         switch (action) {
-            case ACTION_CLOSE_TEXT:
-                clearText();
+            case 2:
                 break;
-
-            case ACTION_MOVE_TEXT:
-                textOffsetX += dx;
-                textOffsetY += dy;
-                break;
-
-            case ACTION_SCALE_ROTATE_TEXT:
-                float centerX = textRect.centerX();
-                float centerY = textRect.centerY();
-                float currentX = e.getX(pointerIndex);
-                float currentY = e.getY(pointerIndex);
-                double radians = Math.atan2(currentY - centerY, currentX - centerX);
-                textDegree = Math.toDegrees(radians);
-                break;
-
             case ACTION_MOVE_SHAPE:
                 xOffset += dx;
                 yOffset += dy;
@@ -433,16 +248,9 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
         invalidate();
     }
 
-    /**
-     * 清除文字
-     */
-    private void clearText() {
-
-    }
 
     @Override
     public void onMoveGestureUpOrCancel(MotionEvent event) {
-        action = -1;
     }
 
     @Override
@@ -451,49 +259,18 @@ public class BaseBridgeView extends View implements ScaleGestureDetector.OnScale
     }
 
 
-    private RectF getTextLfRect() {
-        Matrix textMatrix = new Matrix();
-        textMatrix.setRotate((float) textDegree, textRect.centerX(), textRect.centerY());
-        textMatrix.mapRect(textRect);
-        return new RectF(textRect.left - radius, textRect.top - radius,
-                textRect.left + radius, textRect.top + radius);
-    }
-
-    private RectF getTextRbRect() {
-        RectF dst = new RectF(textRect.right - radius, textRect.bottom - radius,
-                textRect.right + radius, textRect.bottom + radius);
-        dst.inset(-dpToPx(10),-dpToPx(10));
-        return dst;
-    }
-
-    private float[] mapPoint(float x,float y) {
-        Matrix textMatrix = new Matrix();
-        textMatrix.setRotate(-(float) textDegree, textRect.centerX(), textRect.centerY());
-        float[] dst = new float[2];
-        textMatrix.mapPoints(dst,new float[]{x, y});
-        return dst;
-    }
-
     @Override
     public boolean onMoveGestureBeginTap(MotionEvent event) {
-        float[] mapPoints = mapPoint(event.getX(), event.getY());
-        float x = mapPoints[0];
-        float y = mapPoints[1];
 
-        if (getTextLfRect().contains(x, y)) {
-            action = ACTION_CLOSE_TEXT;
-
-        } else if (getTextRbRect().contains(x, y)) {
-            action = ACTION_SCALE_ROTATE_TEXT;
-
-        } else if (textRect.contains(x, y)) {
-            action = ACTION_MOVE_TEXT;
-
-        } else if (drawRect.contains(x, y)) {
+        if (textComponent.contains(event.getX(), event.getY())) {
+            action = 2;
+        } else if (drawRect.contains(event.getX(), event.getY())) {
             action = ACTION_MOVE_SHAPE;
         }
+        invalidate();
         return false;
     }
+
 
     public void drawText(String s) {
 
