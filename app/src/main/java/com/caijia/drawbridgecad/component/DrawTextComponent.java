@@ -1,4 +1,4 @@
-package com.caijia.drawbridgecad;
+package com.caijia.drawbridgecad.component;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -9,12 +9,15 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.TypedValue;
 import android.view.MotionEvent;
+import android.view.View;
+
+import com.caijia.drawbridgecad.MoveGestureDetector;
 
 /**
  * 绘制文本组件
  * Created by cai.jia 2018/11/18 18:50
  */
-public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListener, DrawComponent {
+public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListener {
 
     /**
      * 缩放+旋转文字组件
@@ -101,42 +104,55 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
      */
     private int action;
     private OnCloseTextComponentListener onCloseTextComponentListener;
+    private Matrix matrix = new Matrix();
+    private Paint paint;
+    private View parentView;
+    private String text;
 
-    public DrawTextComponent(Context context) {
-        this.context = context;
+    public DrawTextComponent(View parentView, String text) {
+        this.text = text;
+        this.parentView = parentView;
+        context = parentView.getContext();
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setAntiAlias(true);
+        paint.setColor(Color.WHITE);
+        paint.setStrokeWidth(dpToPx(1));
         radius = (int) dpToPx(12);
         circleIconColor = Color.parseColor("#ddffffff");
         moveGestureDetector = new MoveGestureDetector(context, this);
     }
 
-
-    @Override
-    public void onDraw(Canvas canvas, Paint paint) {
-
+    public void drawText(Canvas canvas, int centerX, int centerY, float testSize) {
+        drawText(canvas, centerX, centerY, testSize, paint);
     }
 
     /**
      * 绘制文字组件,包含边框+操作按钮+关闭按钮+文字
      *
      * @param canvas   canvas
-     * @param text     文字
      * @param centerX  中心点x坐标
      * @param centerY  中心点y坐标
      * @param testSize 文字字体大小
      * @param paint    paint
      */
-    public void drawText(Canvas canvas, String text, int centerX, int centerY, float testSize, Paint paint) {
+    public void drawText(Canvas canvas, int centerX, int centerY, float testSize,
+                         Paint paint) {
         int saveTotal = canvas.save();
         canvas.rotate(textDegree, centerX + textOffsetX, centerY + textOffsetY);
+
+        int saveScale = canvas.save();
         canvas.scale(textScale, textScale, centerX + textOffsetX, centerY + textOffsetY);
         //绘制文字边框
-        drawTextBounds(canvas, text, centerX + textOffsetX, centerY + textOffsetY, testSize, paint);
+        drawTextBounds(canvas, centerX + textOffsetX, centerY + textOffsetY,
+                testSize, paint);
+        //绘制文字
+        drawActualText(canvas, testSize, paint);
+        canvas.restoreToCount(saveScale);
+
         //绘制文字关闭图标
         drawCloseTextIcon(canvas, paint);
         //绘制文字操作图标
         drawHandleTextIcon(canvas, paint);
-        //绘制文字
-        drawActualText(canvas, text, testSize, paint);
         canvas.restoreToCount(saveTotal);
     }
 
@@ -144,13 +160,12 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
      * 绘制文字边框
      *
      * @param canvas   canvas
-     * @param text     文字
      * @param centerX  x坐标
      * @param centerY  y坐标
      * @param testSize 文字字体大小
      * @param paint    paint
      */
-    private void drawTextBounds(Canvas canvas, String text, float centerX, float centerY,
+    private void drawTextBounds(Canvas canvas, float centerX, float centerY,
                                 float testSize, Paint paint) {
 
         savePaintParams(paint);
@@ -178,11 +193,10 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
      * 绘制文字
      *
      * @param canvas   canvas
-     * @param text     文字
      * @param testSize 文字字体大小
      * @param paint    paint
      */
-    private void drawActualText(Canvas canvas, String text, float testSize, Paint paint) {
+    private void drawActualText(Canvas canvas, float testSize, Paint paint) {
         savePaintParams(paint);
         paint.setTextSize(testSize);
         paint.setStrokeWidth(0);
@@ -199,13 +213,17 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
      * @param paint  paint
      */
     private void drawCloseTextIcon(Canvas canvas, Paint paint) {
+        float[] points = mapPointByTextScale(textRect.left, textRect.top);
+        float left = points[0];
+        float top = points[1];
+
         //绘制文字左上角关闭图标
         savePaintParams(paint);
         paint.setColor(circleIconColor);
         if (!showTextDecoration) {
             paint.setColor(Color.TRANSPARENT);
         }
-        canvas.drawCircle(textRect.left, textRect.top, radius, paint);
+        canvas.drawCircle(left, top, radius, paint);
         restorePaintParams(paint);
 
         //绘制关闭图标的X
@@ -218,19 +236,28 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         float radiusSin45 = (float) (Math.sin(Math.toRadians(45)) * (radius - spacing));
 
         canvas.drawLine(
-                textRect.left - radiusSin45,
-                textRect.top - radiusSin45,
-                textRect.left + radiusSin45,
-                textRect.top + radiusSin45,
+                left - radiusSin45,
+                top - radiusSin45,
+                left + radiusSin45,
+                top + radiusSin45,
                 paint);
 
         canvas.drawLine(
-                textRect.left - radiusSin45,
-                textRect.top + radiusSin45,
-                textRect.left + radiusSin45,
-                textRect.top - radiusSin45,
+                left - radiusSin45,
+                top + radiusSin45,
+                left + radiusSin45,
+                top - radiusSin45,
                 paint);
         restorePaintParams(paint);
+    }
+
+    private float[] mapPointByTextScale(float x, float y) {
+        matrix.reset();
+        float[] src = {x, y};
+        float[] dst = new float[2];
+        matrix.postScale(textScale, textScale, textRect.centerX(), textRect.centerY());
+        matrix.mapPoints(dst, src);
+        return dst;
     }
 
     /**
@@ -240,6 +267,10 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
      * @param paint  paint
      */
     private void drawHandleTextIcon(Canvas canvas, Paint paint) {
+        float[] points = mapPointByTextScale(textRect.right, textRect.bottom);
+        float mapRight = points[0];
+        float mapBottom = points[1];
+
         float spacing = radius / 3f;
         //绘制文字右下角操作图标
         savePaintParams(paint);
@@ -247,7 +278,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         if (!showTextDecoration) {
             paint.setColor(Color.TRANSPARENT);
         }
-        canvas.drawCircle(textRect.right, textRect.bottom, radius, paint);
+        canvas.drawCircle(mapRight, mapBottom, radius, paint);
         restorePaintParams(paint);
 
         savePaintParams(paint);
@@ -257,10 +288,10 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         }
         int arrowWidth = radius / 2;
         float radiusSin45 = (float) (Math.sin(Math.toRadians(45)) * (radius - spacing));
-        float left = textRect.right - radiusSin45;
-        float top = textRect.bottom - radiusSin45;
-        float right = textRect.right + radiusSin45;
-        float bottom = textRect.bottom + radiusSin45;
+        float left = mapRight - radiusSin45;
+        float top = mapBottom - radiusSin45;
+        float right = mapRight + radiusSin45;
+        float bottom = mapBottom + radiusSin45;
 
         float halfStrokeW = paint.getStrokeWidth() / 2;
         canvas.drawLine(left, top, right, bottom, paint);
@@ -271,7 +302,6 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         restorePaintParams(paint);
     }
 
-    @Override
     public void onTouchEvent(MotionEvent event) {
         moveGestureDetector.onTouchEvent(event);
     }
@@ -321,11 +351,13 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
                 textScale = deltaScale + previousTextScale;
                 break;
         }
+        parentView.invalidate();
     }
 
     @Override
     public void onMoveGestureUpOrCancel(MotionEvent event) {
         action = -1;
+        parentView.invalidate();
     }
 
     @Override
@@ -363,6 +395,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
             showTextDecoration = false;
         }
 
+        parentView.invalidate();
         return false;
     }
 
@@ -373,13 +406,16 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
      * @param y y坐标
      * @return true 包含
      */
-    @Override
     public boolean contains(float x, float y) {
         float[] points = mapPoint(x, y);
         float mapX = points[0];
         float mapY = points[1];
         return getTextLfRect().contains(mapX, mapY) || getTextRbRect().contains(mapX, mapY) ||
                 textRect.contains(mapX, mapY);
+    }
+
+    public boolean isHandleText() {
+        return action != -1;
     }
 
     private double toCenterDistance(float x, float y) {

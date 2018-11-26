@@ -3,19 +3,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="#000000">
+    android:background="#000000"
+    tools:context=".MainActivity">
 
-    <com.caijia.drawbridgecad.BaseBridgeView
+    <com.caijia.drawbridgecad.view.BridgeView2
         android:id="@+id/bridge_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <Button
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="text"
-        android:layout_gravity="right"
-        android:onClick="drawText"/>
+        android:orientation="vertical">
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:onClick="drawText"
+            android:text="文字" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:onClick="drawPath"
+            android:text="曲线" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:onClick="drawLine"
+            android:text="直线" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:onClick="drawCircle"
+            android:text="圆形" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:onClick="drawRect"
+            android:text="矩形" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:onClick="cancelPrevious"
+            android:text="撤销" />
+
+    </LinearLayout>
 </FrameLayout>
