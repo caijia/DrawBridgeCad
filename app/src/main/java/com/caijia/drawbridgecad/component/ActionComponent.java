@@ -3,6 +3,7 @@ package com.caijia.drawbridgecad.component;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
@@ -21,17 +22,22 @@ import java.util.List;
  */
 public class ActionComponent implements MoveGestureDetector.OnMoveGestureListener {
 
+    private static final int NONE = 0;
     private static final int OVAL = 1;
     private static final int PATH = 2;
     private static final int RECT = 3;
     private static final int LINE = 4;
-    private int shapeType = PATH;
+    private int shapeType = NONE;
     private List<Shape> shapeList;
     private Paint paint;
     private Shape shape;
     private MoveGestureDetector gestureDetector;
     private View parentView;
     private Context context;
+    private float xOffset;
+    private float yOffset;
+    private Matrix matrix = new Matrix();
+    private RectF rectF = new RectF();
 
     public ActionComponent(View parentView) {
         init(parentView);
@@ -64,9 +70,16 @@ public class ActionComponent implements MoveGestureDetector.OnMoveGestureListene
         }
     }
 
+    private Path path = new Path();
+
     private float dpToPx(float dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 getContext().getResources().getDisplayMetrics());
+    }
+
+    public void setOffset(float xOffset, float yOffset) {
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
     }
 
     private void drawShape(Canvas canvas, Shape s) {
@@ -102,7 +115,7 @@ public class ActionComponent implements MoveGestureDetector.OnMoveGestureListene
         }
     }
 
-    public void drawLine(){
+    public void drawLine() {
         this.shapeType = LINE;
     }
 
@@ -135,22 +148,24 @@ public class ActionComponent implements MoveGestureDetector.OnMoveGestureListene
     }
 
     private void addShapePoint(MotionEvent e) {
-        if (shape == null) {
-            shape = new Shape();
-            shape.shapeType = shapeType;
-            shapeList.add(shape);
-        }
-
-        if (shape.hasPoint()) {
-            shape.addPoint(e.getX(), e.getY());
-            if (shapeType == PATH) {
-                shape.path.lineTo(e.getX(), e.getY());
+        if (enable()) {
+            if (shape == null) {
+                shape = new Shape();
+                shape.shapeType = shapeType;
+                shapeList.add(shape);
             }
 
-        } else {
-            shape.addPoint(e.getX(), e.getY());
-            if (shapeType == PATH) {
-                shape.path.moveTo(e.getX(), e.getY());
+            if (shape.hasPoint()) {
+                shape.addPoint(e.getX(), e.getY());
+                if (shapeType == PATH) {
+                    shape.path.lineTo(e.getX(), e.getY());
+                }
+
+            } else {
+                shape.addPoint(e.getX(), e.getY());
+                if (shapeType == PATH) {
+                    shape.path.moveTo(e.getX(), e.getY());
+                }
             }
         }
         parentView.invalidate();
@@ -173,6 +188,14 @@ public class ActionComponent implements MoveGestureDetector.OnMoveGestureListene
 
     public void onTouchEvent(MotionEvent event) {
         gestureDetector.onTouchEvent(event);
+    }
+
+    public boolean enable() {
+        return shapeType != NONE;
+    }
+
+    public void disable() {
+        shapeType = NONE;
     }
 
     private static class Shape {

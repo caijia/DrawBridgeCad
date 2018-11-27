@@ -122,7 +122,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         moveGestureDetector = new MoveGestureDetector(context, this);
     }
 
-    public void drawText(Canvas canvas, int centerX, int centerY, float testSize) {
+    public void drawText(Canvas canvas, float centerX, float centerY, float testSize) {
         drawText(canvas, centerX, centerY, testSize, paint);
     }
 
@@ -135,7 +135,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
      * @param testSize 文字字体大小
      * @param paint    paint
      */
-    public void drawText(Canvas canvas, int centerX, int centerY, float testSize,
+    public void drawText(Canvas canvas, float centerX, float centerY, float testSize,
                          Paint paint) {
         int saveTotal = canvas.save();
         canvas.rotate(textDegree, centerX + textOffsetX, centerY + textOffsetY);

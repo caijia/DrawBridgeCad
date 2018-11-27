@@ -29,6 +29,6 @@ public class BridgeView3 extends BaseBridgeView {
 
     @Override
     public void drawBackgroundComponent(Canvas canvas) {
-        bridgeComponent3.draw(canvas, getWidth(), getHeight(), 122, "L34-34-8");
+        bridgeComponent3.draw(canvas, getWidth(), getHeight(), 15, "L34-34-7");
     }
 }

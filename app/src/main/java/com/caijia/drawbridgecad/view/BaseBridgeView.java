@@ -27,6 +27,7 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
     private MoveGestureDetector gestureDetector;
     private float xOffset;
     private float yOffset;
+    private boolean move = true;
 
     public BaseBridgeView(Context context) {
         this(context, null);
@@ -66,10 +67,14 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
         canvas.translate(xOffset, yOffset);
         drawBackgroundComponent(canvas);
         actionComponent.draw(canvas);
+        canvas.restoreToCount(save);
+
         for (DrawTextComponent textComponent : textList) {
-            textComponent.drawText(canvas, viewWidth / 2, viewHeight / 2,
+            textComponent.drawText(
+                    canvas,
+                    viewWidth / 2 + xOffset,
+                    viewHeight / 2 + yOffset,
                     spToPx(22));
-            canvas.restoreToCount(save);
         }
     }
 
@@ -78,18 +83,22 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        boolean isHandleText = false;
-        for (DrawTextComponent textComponent : textList) {
-            textComponent.onTouchEvent(event);
+        if (move) {
+            gestureDetector.onTouchEvent(event);
+
+        } else {
+            boolean isHandleText = false;
+            for (DrawTextComponent textComponent : textList) {
+                textComponent.onTouchEvent(event);
+                if (!isHandleText) {
+                    isHandleText = textComponent.isHandleText();
+                }
+            }
+
             if (!isHandleText) {
-                isHandleText = textComponent.isHandleText();
+                actionComponent.onTouchEvent(event);
             }
         }
-
-        if (!isHandleText) {
-            actionComponent.onTouchEvent(event);
-        }
-        gestureDetector.onTouchEvent(event);
         return true;
     }
 
@@ -104,18 +113,22 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
     }
 
     public void drawPath() {
+        move = false;
         actionComponent.drawPath();
     }
 
     public void drawLine() {
+        move = false;
         actionComponent.drawLine();
     }
 
     public void drawCircle() {
+        move = false;
         actionComponent.drawOval();
     }
 
     public void drawRect() {
+        move = false;
         actionComponent.drawRect();
     }
 
@@ -123,10 +136,18 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
         actionComponent.cancelPreviousDraw();
     }
 
+    public void move() {
+        move = true;
+        actionComponent.disable();
+    }
+
     @Override
-    public void onMoveGestureScroll(MotionEvent downEvent, MotionEvent currentEvent, int pointerIndex, float dx, float dy, float distanceX, float distanceY) {
+    public void onMoveGestureScroll(MotionEvent downEvent, MotionEvent currentEvent,
+                                    int pointerIndex, float dx, float dy, float distanceX,
+                                    float distanceY) {
         xOffset += dx;
         yOffset += dy;
+        invalidate();
     }
 
     @Override
@@ -143,4 +164,6 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
     public boolean onMoveGestureBeginTap(MotionEvent event) {
         return false;
     }
+
+
 }

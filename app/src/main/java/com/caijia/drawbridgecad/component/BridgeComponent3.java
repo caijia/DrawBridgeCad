@@ -35,10 +35,19 @@ public class BridgeComponent3 extends BaseBridgeComponent {
     public BridgeComponent3(Context context) {
         super(context);
         initHeight = (int) dpToPx(26);
+        minScale = (int) dpToPx(60);
     }
 
     private void computeScaleAndStep(int viewWidth, int viewHeight, int width, int height) {
+        hCount = height;
+        hStep = 1;
+        hScale = (int) dpToPx(10);
+
         int freeWidth = viewWidth - margin * 2;
+        float percentWidth = freeWidth / (hCount + 1);
+        if (percentWidth < minScale) {
+            freeWidth = (int) (minScale * (hCount + 1));
+        }
         wScale = freeWidth / width;
         if (minScale > wScale) {
             int stepCount = freeWidth / minScale;
@@ -48,10 +57,6 @@ public class BridgeComponent3 extends BaseBridgeComponent {
             wScale = minScale;
         }
         wCount = (float) width / wStep;
-
-        hCount = height;
-        hStep = 1;
-        hScale = (int) dpToPx(10);
     }
 
     public void draw(Canvas canvas, int viewWidth, int viewHeight, int width, String heightExtra) {

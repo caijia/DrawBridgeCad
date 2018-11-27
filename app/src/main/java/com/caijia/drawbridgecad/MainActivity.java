@@ -43,4 +43,8 @@ public class MainActivity extends AppCompatActivity {
     public void cancelPrevious(View view) {
         bridgeView.cancelPreviousDraw();
     }
+
+    public void move(View view) {
+        bridgeView.move();
+    }
 }
