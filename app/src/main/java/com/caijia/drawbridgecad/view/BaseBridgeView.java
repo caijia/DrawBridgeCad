@@ -9,6 +9,7 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.caijia.drawbridgecad.MoveGestureDetector;
 import com.caijia.drawbridgecad.component.ActionComponent;
 import com.caijia.drawbridgecad.component.DrawTextComponent;
 
@@ -19,10 +20,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * 桥涵的底图
  * Created by cai.jia 2018/11/14 15:20
  */
-public abstract class BaseBridgeView extends View {
+public abstract class BaseBridgeView extends View implements MoveGestureDetector.OnMoveGestureListener {
 
     private ActionComponent actionComponent;
     private List<DrawTextComponent> textList = new CopyOnWriteArrayList<>();
+    private MoveGestureDetector gestureDetector;
+    private float xOffset;
+    private float yOffset;
 
     public BaseBridgeView(Context context) {
         this(context, null);
@@ -49,6 +53,7 @@ public abstract class BaseBridgeView extends View {
 
     private void init(final Context context, AttributeSet attrs) {
         actionComponent = new ActionComponent(this);
+        gestureDetector = new MoveGestureDetector(context, this);
     }
 
     @Override
@@ -57,11 +62,14 @@ public abstract class BaseBridgeView extends View {
         int viewWidth = getWidth();
         int viewHeight = getHeight();
 
+        int save = canvas.save();
+        canvas.translate(xOffset, yOffset);
         drawBackgroundComponent(canvas);
         actionComponent.draw(canvas);
         for (DrawTextComponent textComponent : textList) {
             textComponent.drawText(canvas, viewWidth / 2, viewHeight / 2,
                     spToPx(22));
+            canvas.restoreToCount(save);
         }
     }
 
@@ -81,6 +89,7 @@ public abstract class BaseBridgeView extends View {
         if (!isHandleText) {
             actionComponent.onTouchEvent(event);
         }
+        gestureDetector.onTouchEvent(event);
         return true;
     }
 
@@ -112,5 +121,26 @@ public abstract class BaseBridgeView extends View {
 
     public void cancelPreviousDraw() {
         actionComponent.cancelPreviousDraw();
+    }
+
+    @Override
+    public void onMoveGestureScroll(MotionEvent downEvent, MotionEvent currentEvent, int pointerIndex, float dx, float dy, float distanceX, float distanceY) {
+        xOffset += dx;
+        yOffset += dy;
+    }
+
+    @Override
+    public void onMoveGestureUpOrCancel(MotionEvent event) {
+
+    }
+
+    @Override
+    public void onMoveGestureDoubleTap(MotionEvent event) {
+
+    }
+
+    @Override
+    public boolean onMoveGestureBeginTap(MotionEvent event) {
+        return false;
     }
 }
