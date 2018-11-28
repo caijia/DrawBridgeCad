@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 /**
  * Created by cai.jia 2018/11/26 08:44
  */
-public class BridgeComponent3 extends BaseBridgeComponent {
+public class BridgeComponent4 extends BaseBridgeComponent {
 
     private static final String REGEX = "(L\\d+-\\d+-)(\\d+)";
 
@@ -30,10 +30,10 @@ public class BridgeComponent3 extends BaseBridgeComponent {
     private float[] pos = new float[2];
     private float[] tan = new float[2];
 
-    public BridgeComponent3(Context context) {
+    public BridgeComponent4(Context context) {
         super(context);
         initHeight = (int) dpToPx(26);
-        minScale = (int) dpToPx(50);
+        minScale = (int) dpToPx(56);
     }
 
     private void computeScaleAndStep(int viewWidth, int viewHeight, int width, int height) {
@@ -42,9 +42,9 @@ public class BridgeComponent3 extends BaseBridgeComponent {
         hScale = (int) dpToPx(10);
 
         int freeWidth = viewWidth - margin * 2;
-        float percentWidth = freeWidth / (hCount + 1);
+        float percentWidth = freeWidth / (2 * hCount + 1);
         if (percentWidth < minScale) {
-            freeWidth = (int) (minScale * (hCount + 1));
+            freeWidth = (int) (minScale * (2 * hCount + 1));
         }
         wScale = freeWidth / width;
         if (minScale > wScale) {
@@ -118,20 +118,19 @@ public class BridgeComponent3 extends BaseBridgeComponent {
             restorePaintParams();
         }
 
-
         //横线
         canvas.drawLine(rectStartX, rectStartY, rectEndX, rectStartY, paint);
 
-        //圆弧 从第二个 - 倒数第二个 画弧
+        //画弧
         savePaintParams();
         paint.setStyle(Paint.Style.STROKE);
-        float percentWidth = mapWidth / (hCount + 1);
+        float percentWidth = mapWidth / (2 * hCount + 1);
         arcPath.reset();
-        arcPath.moveTo(rectStartX, rectStartY + initHeight);
-        arcPath.lineTo(rectStartX + percentWidth, rectStartY + initHeight);
+        arcPath.moveTo(rectStartX, rectEndY);
+        arcPath.lineTo(rectStartX + percentWidth, rectEndY);
         arcPath.quadTo(
                 rectStartX + (rectEndX - rectStartX) / 2,
-                rectStartY + initHeight,
+                rectStartY - (mapHeight - initHeight) / 2,
                 rectEndX - percentWidth,
                 rectEndY);
         arcPath.lineTo(rectEndX, rectEndY);
@@ -141,13 +140,24 @@ public class BridgeComponent3 extends BaseBridgeComponent {
         restorePaintParams();
 
         float pathLength = pathMeasure.getLength();
-        float percentPathLength = pathLength / (hCount + 1); //8等分
-        for (float k = hCount + 2 - 1; k >= 0; k--) {  //9条线
-            pathMeasure.getPosTan(k * percentPathLength, pos, tan);
-            canvas.drawLine(pos[0], rectStartY, pos[0], pos[1], paint);
+        float percentPathLength = pathLength / (2 * hCount + 1); // 8 -> 17
+        for (int k = 0; k < 2 * hCount + 2; k++) {
 
-            if (k > 0) {
-                String text = hUnit + (int) (hCount + 2 - 1 - k) + "#";
+            if (k <= hCount) {
+                pathMeasure.getPosTan(k * percentPathLength, pos, tan);
+                canvas.drawLine(pos[0], rectStartY, pos[0], pos[1], paint);
+
+                if (k != hCount) {
+                    String text = hUnit + k + "#";
+                    drawText(canvas, text, pos[0]);
+                }
+
+            } else {
+                pathMeasure.getPosTan(
+                        (2 * hCount + 1 - (k - hCount - 1)) * percentPathLength, pos, tan);
+                canvas.drawLine(pos[0], rectStartY, pos[0], pos[1], paint);
+
+                String text = hUnit + (int) (k - hCount - 1) + "#";
                 drawText(canvas, text, pos[0] - percentWidth);
             }
         }

@@ -13,9 +13,9 @@ public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
-        System.out.println(Math.signum(Math.toRadians(30)));
+        System.out.println(Math.sin(Math.toRadians(60)));
 
-        double v = Math.atan2(0, 1);
+        double v = Math.atan2(1, 1);
         System.out.println(Math.toDegrees(v));
     }
 }

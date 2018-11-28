@@ -17,9 +17,6 @@ public class MainActivity extends AppCompatActivity {
         bridgeView = findViewById(R.id.bridge_view);
     }
 
-    public void editImage(View view) {
-    }
-
     public void drawText(View view) {
         bridgeView.drawText("哈哈哈");
     }

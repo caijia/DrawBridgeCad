@@ -49,7 +49,7 @@ public class BaseBridgeComponent {
         paint.setColor(Color.WHITE);
         paint.setStrokeWidth(dpToPx(1));
 
-        margin = (int) dpToPx(30);
+        margin = (int) dpToPx(60);
         scaleSize = (int) dpToPx(4);
         rectToScaleSize = (int) dpToPx(8);
         textToScaleSize = (int) dpToPx(2);
