@@ -4,37 +4,29 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.text.TextUtils;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by cai.jia 2018/11/26 08:44
  */
-public class BridgeComponent12 extends BaseBridgeComponent {
+public class BridgeComponent13 extends BaseBridgeComponent {
 
-    private static final String UNIT = "m";
-    private static final String REGEX = "(L\\d+-)(\\d+)";
-    private static final String TEXT_KXB_CODE = "空心板编号";
-    private static final String TEXT_JF_CODE = "铰缝编号";
+    private String unit = "cm";
     private float degree = 80;
     private int dWidth;
     private Path path = new Path();
     private double tanDegree;
-    private String wUnit;
-    private Pattern pattern = Pattern.compile(REGEX);
 
-    public BridgeComponent12(Context context) {
+    public BridgeComponent13(Context context) {
         super(context);
     }
 
-    public BridgeComponent12(Context context, float degree) {
+    public BridgeComponent13(Context context, float degree, String unit) {
         super(context);
         this.degree = degree;
+        this.unit = unit;
     }
 
-    private void computeScaleAndStep(int viewWidth, int viewHeight, int width, float height) {
+    private void computeScaleAndStep(int viewWidth, int viewHeight, float width, float height) {
         int freeHeight = viewHeight - margin * 2;
         float avgHeight = freeHeight / height;
         hCount = height;
@@ -45,31 +37,22 @@ public class BridgeComponent12 extends BaseBridgeComponent {
             hCount = height / hStep;
         }
 
-        float mapHeight = hCount * hScale * hStep;
+        float mapHeight = hCount * hStep * hScale;
         tanDegree = Math.tan(Math.toRadians(degree));
         dWidth = (int) (mapHeight / tanDegree);
-        wScale = minScale;
-        wCount = width / wStep;
-    }
 
-    public void draw(Canvas canvas, int viewWidth, int viewHeight, String widthExtra, float height) {
-        if (TextUtils.isEmpty(widthExtra)) {
-            throw new RuntimeException("widthExtra is null");
-        }
-
-        boolean isMatcher = widthExtra.matches(REGEX);
-        if (!isMatcher) {
-            throw new RuntimeException("widthExtra format is error must be matcher " + REGEX);
-        }
-        Matcher matcher = pattern.matcher(widthExtra);
-        if (matcher.matches()) {
-            wUnit = matcher.group(1);
-            int width = Integer.parseInt(matcher.group(2));
-            draw(canvas, viewWidth, viewHeight, width, height);
+        int freeWidth = viewWidth - margin * 2;
+        float avgWidth = freeWidth / width;
+        wCount = width;
+        if (avgWidth < minScale) {
+            int stepCount = freeWidth / minScale;
+            wStep = (int) (width / stepCount);
+            wScale = (int) avgWidth;
+            wCount = width / wStep;
         }
     }
 
-    public void draw(Canvas canvas, int viewWidth, int viewHeight, int width, float height) {
+    public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, float height) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
 
         //矩形宽度
@@ -84,27 +67,29 @@ public class BridgeComponent12 extends BaseBridgeComponent {
         float rectEndX = rectStartX + mapWidth;
         float rectEndY = rectStartY + mapHeight;
 
-        float tanX = (float) (mapHeight / tanDegree);
-        for (int i = 0; i < wCount; i++) {
-            String text = wUnit + (i + 1);
-            int incrementWidth = i * wScale * wStep;
-            drawText(canvas, Paint.Align.CENTER, text,
-                    rectStartX + dWidth + incrementWidth + wScale * wStep / 2,
-                    rectStartY - rectToScaleSize, false);
+        canvas.drawLine(rectStartX + dWidth, rectStartY - rectToScaleSize,
+                rectEndX, rectStartY - rectToScaleSize, paint);
 
-            if (i < wCount - 1) {
-                drawText(canvas, Paint.Align.CENTER, text,
-                        rectStartX + incrementWidth + wScale * wStep,
-                        rectEndY + rectToScaleSize, true);
+        int floorW = (int) Math.floor(wCount);
+        for (float k = 0; k <= floorW; k++) {
+            //刻度线
+            float i = k;
+            if (k == floorW) {
+                i = wCount;
             }
 
+            float incrementWidth = i * wScale * wStep;
             canvas.drawLine(
-                    rectStartX + dWidth + incrementWidth,
-                    rectStartY,
-                    rectStartX + dWidth - tanX + incrementWidth,
-                    rectEndY,
-                    paint
-            );
+                    rectStartX + incrementWidth + dWidth,
+                    rectStartY + -rectToScaleSize,
+                    rectStartX + incrementWidth + dWidth,
+                    rectStartY - rectToScaleSize - scaleSize,
+                    paint);
+
+            String text = removeZero(i * wStep + "") + unit;
+            drawText(canvas, Paint.Align.CENTER, text,
+                    rectStartX + incrementWidth + dWidth,
+                    rectStartY - rectToScaleSize - scaleSize - textToScaleSize, false);
         }
 
         //竖刻度
@@ -133,7 +118,7 @@ public class BridgeComponent12 extends BaseBridgeComponent {
                     rectStartY + curHeight,
                     paint);
 
-            String text = removeZero(i * hStep + "") + UNIT;
+            String text = removeZero(i * hStep + "") + unit;
             drawText(canvas, Paint.Align.LEFT, text,
                     rectEndX + rectToScaleSize + scaleSize + textToScaleSize - curOffsetX,
                     rectStartY + curHeight, true);
@@ -149,14 +134,6 @@ public class BridgeComponent12 extends BaseBridgeComponent {
         path.close();
         canvas.drawPath(path, paint);
         restorePaintParams();
-
-        drawText(canvas, Paint.Align.CENTER, TEXT_KXB_CODE,
-                rectStartX + dWidth + (mapWidth - dWidth) / 2,
-                rectStartY - dpToPx(20), false);
-
-        drawText(canvas, Paint.Align.CENTER, TEXT_JF_CODE,
-                rectStartX + (mapWidth - dWidth) / 2,
-                rectEndY + dpToPx(20), true);
     }
 
     private void drawText(Canvas canvas, Paint.Align align, String text, float x, float y,
