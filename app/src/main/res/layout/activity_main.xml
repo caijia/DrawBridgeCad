@@ -6,16 +6,17 @@
     android:background="#000000"
     tools:context=".MainActivity">
 
-    <com.caijia.drawbridgecad.view.BridgeView2
+    <com.caijia.drawbridgecad.view.BridgeView15
         android:id="@+id/bridge_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <LinearLayout
-        android:visibility="visible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_gravity="bottom|center_horizontal"
+        android:orientation="horizontal"
+        android:visibility="visible">
 
         <Button
             android:layout_width="wrap_content"
@@ -24,47 +25,75 @@
             android:onClick="move"
             android:text="移动" />
 
-        <Button
+        <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:onClick="drawText"
-            android:text="文字" />
+            android:orientation="horizontal">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:onClick="drawPath"
-            android:text="曲线" />
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackground"
+                android:button="@null"
+                android:drawableLeft="@drawable/selector_draw_text"
+                android:gravity="center"
+                android:onClick="drawText"
+                android:padding="12dp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@null"
+                android:drawableLeft="@drawable/selector_draw_qx"
+                android:gravity="center"
+                android:onClick="drawPath"
+                android:padding="12dp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@null"
+                android:drawableLeft="@drawable/selector_draw_line"
+                android:gravity="center"
+                android:onClick="drawLine"
+                android:padding="12dp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@null"
+                android:drawableLeft="@drawable/selector_draw_circle"
+                android:gravity="center"
+                android:onClick="drawCircle"
+                android:padding="12dp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@null"
+                android:drawableLeft="@drawable/selector_draw_square"
+                android:gravity="center"
+                android:onClick="drawRect"
+                android:padding="12dp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@null"
+                android:drawableLeft="@drawable/selector_draw_cancel"
+                android:gravity="center"
+                android:onClick="cancelPrevious"
+                android:padding="12dp" />
+        </RadioGroup>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:onClick="drawLine"
-            android:text="直线" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:onClick="drawCircle"
-            android:text="圆形" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:onClick="drawRect"
-            android:text="矩形" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:onClick="cancelPrevious"
-            android:text="撤销" />
+            android:onClick="save"
+            android:text="保存" />
 
     </LinearLayout>
+
+
 </FrameLayout>

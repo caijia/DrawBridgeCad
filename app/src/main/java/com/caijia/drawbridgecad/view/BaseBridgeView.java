@@ -151,6 +151,7 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
         xOffset += dx;
         yOffset += dy;
         actionComponent.setOffset(xOffset, yOffset);
+
         invalidate();
     }
 
@@ -175,8 +176,8 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
      * @return bitmap
      */
     public Bitmap saveToBitmap() {
-
-        return null;
+        setDrawingCacheEnabled(true);
+        buildDrawingCache();
+        return getDrawingCache();
     }
-
 }

@@ -158,8 +158,12 @@ public class MoveGestureDetector {
     }
 
     private void recyclerEvent(MotionEvent event) {
-        if (event != null) {
-            event.recycle();
+        try {
+            if (event != null) {
+                event.recycle();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
