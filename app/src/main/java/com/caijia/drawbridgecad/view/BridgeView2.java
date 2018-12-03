@@ -12,12 +12,14 @@ import com.caijia.drawbridgecad.component.BridgeComponent2;
  */
 public class BridgeView2 extends BaseBridgeView {
 
+    private BridgeComponent2 bridgeComponent2;
+
     public BridgeView2(Context context) {
-        this(context,null);
+        this(context, null);
     }
 
     public BridgeView2(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs,0);
+        this(context, attrs, 0);
     }
 
     public BridgeView2(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -25,10 +27,9 @@ public class BridgeView2 extends BaseBridgeView {
         bridgeComponent2 = new BridgeComponent2(context);
     }
 
-    private BridgeComponent2 bridgeComponent2;
-
     @Override
     public void drawBackgroundComponent(Canvas canvas) {
-        bridgeComponent2.draw(canvas, getWidth(), getHeight(), "L2-13", 19);
+        bridgeComponent2.draw(canvas, getWidth(), getHeight(), 12.2f, 6,
+                "L", 34);
     }
 }

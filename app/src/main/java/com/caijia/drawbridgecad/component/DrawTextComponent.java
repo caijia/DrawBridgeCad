@@ -115,7 +115,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         context = parentView.getContext();
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setAntiAlias(true);
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.RED);
         paint.setStrokeWidth(dpToPx(1));
         radius = (int) dpToPx(12);
         circleIconColor = Color.parseColor("#ddffffff");
@@ -181,6 +181,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
                 centerY + bounds[1] / 2);
         textRect.inset(-radius, -radius);
         savePaintParams(paint);
+        paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.STROKE);
         if (!showTextDecoration) {
             paint.setColor(Color.TRANSPARENT);

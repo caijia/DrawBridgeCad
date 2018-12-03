@@ -4,9 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.text.TextUtils;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -34,7 +32,7 @@ public class BridgeComponent12 extends BaseBridgeComponent {
         this.degree = degree;
     }
 
-    private void computeScaleAndStep(int viewWidth, int viewHeight, int width, float height) {
+    private void computeScaleAndStep(int viewWidth, int viewHeight, float width, float height) {
         int freeHeight = viewHeight - margin * 2;
         float avgHeight = freeHeight / height;
         hCount = height;
@@ -52,24 +50,8 @@ public class BridgeComponent12 extends BaseBridgeComponent {
         wCount = width / wStep;
     }
 
-    public void draw(Canvas canvas, int viewWidth, int viewHeight, String widthExtra, float height) {
-        if (TextUtils.isEmpty(widthExtra)) {
-            throw new RuntimeException("widthExtra is null");
-        }
-
-        boolean isMatcher = widthExtra.matches(REGEX);
-        if (!isMatcher) {
-            throw new RuntimeException("widthExtra format is error must be matcher " + REGEX);
-        }
-        Matcher matcher = pattern.matcher(widthExtra);
-        if (matcher.matches()) {
-            wUnit = matcher.group(1);
-            int width = Integer.parseInt(matcher.group(2));
-            draw(canvas, viewWidth, viewHeight, width, height);
-        }
-    }
-
-    public void draw(Canvas canvas, int viewWidth, int viewHeight, int width, float height) {
+    public void draw(Canvas canvas, int viewWidth, int viewHeight, int width, float height,
+                     String direction, int dun) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
 
         //矩形宽度
@@ -86,6 +68,7 @@ public class BridgeComponent12 extends BaseBridgeComponent {
 
         float tanX = (float) (mapHeight / tanDegree);
         for (int i = 0; i < wCount; i++) {
+            wUnit = direction + dun + "-";
             String text = wUnit + (i + 1);
             int incrementWidth = i * wScale * wStep;
             drawText(canvas, Paint.Align.CENTER, text,
@@ -157,20 +140,5 @@ public class BridgeComponent12 extends BaseBridgeComponent {
         drawText(canvas, Paint.Align.CENTER, TEXT_JF_CODE,
                 rectStartX + (mapWidth - dWidth) / 2,
                 rectEndY + dpToPx(20), true);
-    }
-
-    private void drawText(Canvas canvas, Paint.Align align, String text, float x, float y,
-                          boolean addSelfHalfHeight) {
-        savePaintParams();
-        paint.setTextSize(spToPx(10));
-        paint.setStrokeWidth(0);
-        paint.setTextAlign(align);
-        int nameHalfHeight = getTextBounds(text, paint)[1] / 2;
-        canvas.drawText(
-                text,
-                x,
-                y + (addSelfHalfHeight ? nameHalfHeight : 0),
-                paint);
-        restorePaintParams();
     }
 }

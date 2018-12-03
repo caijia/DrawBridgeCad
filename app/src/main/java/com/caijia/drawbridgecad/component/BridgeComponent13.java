@@ -135,19 +135,4 @@ public class BridgeComponent13 extends BaseBridgeComponent {
         canvas.drawPath(path, paint);
         restorePaintParams();
     }
-
-    private void drawText(Canvas canvas, Paint.Align align, String text, float x, float y,
-                          boolean addSelfHalfHeight) {
-        savePaintParams();
-        paint.setTextSize(spToPx(10));
-        paint.setStrokeWidth(0);
-        paint.setTextAlign(align);
-        int nameHalfHeight = getTextBounds(text, paint)[1] / 2;
-        canvas.drawText(
-                text,
-                x,
-                y + (addSelfHalfHeight ? nameHalfHeight : 0),
-                paint);
-        restorePaintParams();
-    }
 }

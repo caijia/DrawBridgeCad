@@ -2,6 +2,7 @@ package com.caijia.drawbridgecad.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -83,21 +84,23 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (move) {
-            gestureDetector.onTouchEvent(event);
-
-        } else {
-            boolean isHandleText = false;
-            for (DrawTextComponent textComponent : textList) {
-                textComponent.onTouchEvent(event);
-                if (!isHandleText) {
-                    isHandleText = textComponent.isHandleText();
-                }
-            }
-
+        boolean isHandleText = false;
+        //操作文字
+        for (DrawTextComponent textComponent : textList) {
+            textComponent.onTouchEvent(event);
             if (!isHandleText) {
-                actionComponent.onTouchEvent(event);
+                isHandleText = textComponent.isHandleText();
             }
+        }
+
+        //移动整体
+        if (move && !isHandleText) {
+            gestureDetector.onTouchEvent(event);
+        }
+
+        //基本图形
+        if (!move && !isHandleText) {
+            actionComponent.onTouchEvent(event);
         }
         return true;
     }
@@ -147,6 +150,7 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
                                     float distanceY) {
         xOffset += dx;
         yOffset += dy;
+        actionComponent.setOffset(xOffset, yOffset);
         invalidate();
     }
 
@@ -165,5 +169,14 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
         return false;
     }
 
+    /**
+     * 生产bitmap
+     *
+     * @return bitmap
+     */
+    public Bitmap saveToBitmap() {
+
+        return null;
+    }
 
 }

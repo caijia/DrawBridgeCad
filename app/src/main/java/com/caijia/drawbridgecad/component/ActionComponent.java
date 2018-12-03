@@ -56,7 +56,7 @@ public class ActionComponent implements MoveGestureDetector.OnMoveGestureListene
         paint = new Paint();
         paint.setAntiAlias(true);
         paint.setStrokeWidth(dpToPx(1));
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.RED);
         paint.setStyle(Paint.Style.STROKE);
     }
 
@@ -149,6 +149,9 @@ public class ActionComponent implements MoveGestureDetector.OnMoveGestureListene
 
     private void addShapePoint(MotionEvent e) {
         if (enable()) {
+            float x = e.getX() - xOffset;
+            float y = e.getY() - yOffset;
+
             if (shape == null) {
                 shape = new Shape();
                 shape.shapeType = shapeType;
@@ -156,15 +159,15 @@ public class ActionComponent implements MoveGestureDetector.OnMoveGestureListene
             }
 
             if (shape.hasPoint()) {
-                shape.addPoint(e.getX(), e.getY());
+                shape.addPoint(x, y);
                 if (shapeType == PATH) {
-                    shape.path.lineTo(e.getX(), e.getY());
+                    shape.path.lineTo(x, y);
                 }
 
             } else {
-                shape.addPoint(e.getX(), e.getY());
+                shape.addPoint(x, y);
                 if (shapeType == PATH) {
-                    shape.path.moveTo(e.getX(), e.getY());
+                    shape.path.moveTo(x, y);
                 }
             }
         }

@@ -3,50 +3,63 @@ package com.caijia.drawbridgecad.component;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Path;
 
 /**
  * Created by cai.jia 2018/11/26 08:44
  */
 public class BridgeComponent1 extends BaseBridgeComponent {
 
-    /**
-     * 单位
-     */
-    private static final String UNIT = "m";
+    private String unit = "cm";
+    private float degree = 90;
+    private int dWidth;
+    private Path path = new Path();
+    private double tanDegree;
+    private float splitLineHeight = dpToPx(20);
 
     public BridgeComponent1(Context context) {
         super(context);
     }
 
-    private void computeScaleAndStep(int viewWidth, int viewHeight, int width, int height) {
-        int freeWidth = viewWidth - margin * 2;
-        int freeHeight = viewHeight - margin * 2;
-        if (viewWidth > viewHeight * width / height) {
-            wScale = hScale = freeHeight / height;
-            if (minScale > hScale) {
-                int stepCount = freeHeight / minScale;
-                wStep = hStep = height / stepCount;
-            }
-
-        } else {
-            hScale = wScale = freeWidth / width;
-            if (minScale > wScale) {
-                int stepCount = freeWidth / minScale;
-                hStep = wStep = width / stepCount;
-            }
-        }
-
-        hCount = (float) height / hStep;
-        wCount = (float) width / wStep;
+    public BridgeComponent1(Context context, String unit) {
+        super(context);
+        this.unit = unit;
     }
 
-    public void draw(Canvas canvas, int viewWidth, int viewHeight, int width, int height) {
+    private void computeScaleAndStep(int viewWidth, int viewHeight, float width, float height) {
+        int freeHeight = viewHeight - margin * 2;
+        float avgHeight = freeHeight / height;
+        hCount = height;
+        if (avgHeight < minScale) {
+            int stepCount = freeHeight / minScale;
+            hStep = (int) (height / stepCount);
+            hScale = (int) avgHeight;
+            hCount = height / hStep;
+        }
+
+        float mapHeight = hCount * hStep * hScale;
+        tanDegree = Math.tan(Math.toRadians(degree));
+        dWidth = (int) (mapHeight / tanDegree);
+
+        int freeWidth = viewWidth - margin * 2;
+        float avgWidth = freeWidth / width;
+        wCount = width;
+        if (avgWidth < minScale) {
+            int stepCount = freeWidth / minScale;
+            wStep = (int) (width / stepCount);
+            wScale = (int) avgWidth;
+            wCount = width / wStep;
+        }
+    }
+
+    public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, float height) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
+
         //矩形宽度
-        float mapWidth = wCount * wScale * wStep;
+        float mapWidth = wCount * wScale * wStep + dWidth;
 
         //矩形高度
-        float mapHeight = hCount * hScale * hStep;
+        float mapHeight = hCount * hStep * hScale;
 
         float rectStartX = (viewWidth - mapWidth) / 2;
         float rectStartY = (viewHeight - mapHeight) / 2;
@@ -54,76 +67,75 @@ public class BridgeComponent1 extends BaseBridgeComponent {
         float rectEndX = rectStartX + mapWidth;
         float rectEndY = rectStartY + mapHeight;
 
-        //横刻度
-        canvas.drawLine(
-                rectStartX,
-                rectStartY - rectToScaleSize,
-                rectEndX,
-                rectStartY - rectToScaleSize,
-                paint);
+        canvas.drawLine(rectStartX + dWidth, rectStartY - rectToScaleSize,
+                rectEndX, rectStartY - rectToScaleSize, paint);
 
-        int floorWidth = (int) Math.floor(wCount) + 1;
-        for (int j = 0; j < floorWidth; j++) {
-            float i = j;
-            if (j == floorWidth - 1) {
+        int floorW = (int) Math.floor(wCount);
+        for (float k = 0; k <= floorW; k++) {
+            //刻度线
+            float i = k;
+            if (k == floorW) {
                 i = wCount;
             }
+
+            float incrementWidth = i * wScale * wStep;
             canvas.drawLine(
-                    rectStartX + i * wScale * wStep,
-                    rectStartY - scaleSize - rectToScaleSize,
-                    rectStartX + i * wScale * wStep,
-                    rectStartY - rectToScaleSize,
+                    rectStartX + incrementWidth + dWidth,
+                    rectStartY + -rectToScaleSize,
+                    rectStartX + incrementWidth + dWidth,
+                    rectStartY - rectToScaleSize - scaleSize,
                     paint);
 
-            savePaintParams();
-            paint.setTextSize(spToPx(10));
-            paint.setStrokeWidth(0);
-            int textHalfWidth = getTextBounds((int) (i * wStep) + UNIT, paint)[0] / 2;
-            canvas.drawText(
-                    (int) (i * wStep) + UNIT,
-                    rectStartX + i * wScale * wStep - textHalfWidth,
-                    rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
-                    paint);
-            restorePaintParams();
+            String text = removeZero(i * wStep + "") + unit;
+            drawText(canvas, Paint.Align.CENTER, text,
+                    rectStartX + incrementWidth + dWidth,
+                    rectStartY - rectToScaleSize - scaleSize - textToScaleSize, false);
         }
 
         //竖刻度
+        float xOffset = (float) (mapHeight / tanDegree);
         canvas.drawLine(
                 rectEndX + rectToScaleSize,
                 rectStartY,
-                rectEndX + rectToScaleSize,
+                rectEndX + rectToScaleSize - xOffset,
                 rectEndY,
                 paint);
 
-        int floorHeight = (int) Math.floor(hCount) + 1;
-        for (int k = 0; k < floorHeight; k++) {
+        //hCount = 8.2  ( 0 - 7 , 8.2 ) 满足条件
+        int floorH = (int) Math.floor(hCount);
+        for (float k = 0; k <= floorH; k++) {
+            //刻度线
             float i = k;
-            if (k == floorHeight - 1) {
+            if (k == floorH) {
                 i = hCount;
             }
+            float curHeight = i * hStep * hScale;
+            float curOffsetX = (float) (curHeight / tanDegree);
             canvas.drawLine(
-                    rectEndX + rectToScaleSize,
-                    rectStartY + i * hScale * hStep,
-                    rectEndX + rectToScaleSize + scaleSize,
-                    rectStartY + i * hScale * hStep,
+                    rectEndX + rectToScaleSize - curOffsetX,
+                    rectStartY + curHeight,
+                    rectEndX + rectToScaleSize - curOffsetX + scaleSize,
+                    rectStartY + curHeight,
                     paint);
 
-
-            savePaintParams();
-            paint.setTextSize(spToPx(10));
-            paint.setStrokeWidth(0);
-            int textHalfHeight = getTextBounds((int) (i * hStep) + UNIT, paint)[1] / 2;
-            canvas.drawText(
-                    (int) (i * hStep) + UNIT,
-                    rectEndX + rectToScaleSize + scaleSize + textToScaleSize,
-                    rectStartY + i * hScale * hStep + textHalfHeight,
-                    paint);
-            restorePaintParams();
+            String text = removeZero(i * hStep + "") + unit;
+            drawText(canvas, Paint.Align.LEFT, text,
+                    rectEndX + rectToScaleSize + scaleSize + textToScaleSize - curOffsetX,
+                    rectStartY + curHeight, true);
         }
 
         savePaintParams();
         paint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(rectStartX, rectStartY, rectEndX, rectEndY, paint);
+        path.reset();
+        path.moveTo(rectStartX + dWidth, rectStartY);
+        path.rLineTo(-dWidth, mapHeight);
+        path.rLineTo(mapWidth - dWidth, 0);
+        path.rLineTo(dWidth, -mapHeight);
+        path.close();
+        canvas.drawPath(path, paint);
         restorePaintParams();
+
+        canvas.drawLine(rectStartX, rectStartY + splitLineHeight,
+                rectEndX, rectStartY + splitLineHeight, paint);
     }
 }

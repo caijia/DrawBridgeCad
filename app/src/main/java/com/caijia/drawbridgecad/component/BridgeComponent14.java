@@ -160,19 +160,4 @@ public class BridgeComponent14 extends BaseBridgeComponent {
                 rectStartX + mapWidth / 2,
                 rectEndY + rectToArrowLine + arrowY + arrowToText, true);
     }
-
-    private void drawText(Canvas canvas, Paint.Align align, String text, float x, float y,
-                          boolean addSelfHalfHeight) {
-        savePaintParams();
-        paint.setTextSize(spToPx(10));
-        paint.setStrokeWidth(0);
-        paint.setTextAlign(align);
-        int nameHalfHeight = getTextBounds(text, paint)[1] / 2;
-        canvas.drawText(
-                text,
-                x,
-                y + (addSelfHalfHeight ? nameHalfHeight : 0),
-                paint);
-        restorePaintParams();
-    }
 }

@@ -1,9 +1,11 @@
 package com.caijia.drawbridgecad.component;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.TypedValue;
 
 /**
@@ -12,9 +14,6 @@ import android.util.TypedValue;
 public class BaseBridgeComponent {
 
     private static final int MIN_SCALE = 40;
-    private PaintParams paintParams = new PaintParams();
-    private Rect textBounds = new Rect();
-    private Context context;
     protected Paint paint;
     /**
      * 刻度尺高度
@@ -28,19 +27,17 @@ public class BaseBridgeComponent {
      * 文字到刻度的间隔
      */
     protected int textToScaleSize;
-
     protected int minScale;
-
     protected int margin;
-
     protected int wScale;
     protected int hScale;
-
     protected int hStep = 1;
     protected int wStep = 1;
-
     protected float hCount;
     protected float wCount;
+    private PaintParams paintParams = new PaintParams();
+    private Rect textBounds = new Rect();
+    private Context context;
 
     public BaseBridgeComponent(Context context) {
         this.context = context;
@@ -94,6 +91,30 @@ public class BaseBridgeComponent {
             s = s.replaceAll("[.]$", "");//如小数点后面全是零则去掉小数点
         }
         return s;
+    }
+
+    public void drawText(Canvas canvas, Paint.Align align, String text, float x, float y,
+                         boolean addSelfHalfHeight) {
+        drawText(canvas, align, text, x, y, addSelfHalfHeight ? 0.5f : 0);
+    }
+
+    public void drawText(Canvas canvas, Paint.Align align, String text, float x, float y,
+                         float selfHeightPercent) {
+        savePaintParams();
+        paint.setTextSize(spToPx(10));
+        paint.setStrokeWidth(0);
+        paint.setTextAlign(align);
+        float nameHalfHeight = getTextBounds(text, paint)[1] * selfHeightPercent;
+        canvas.drawText(
+                text,
+                x,
+                y + nameHalfHeight,
+                paint);
+        restorePaintParams();
+    }
+
+    public RectF getDrawableBounds() {
+        return null;
     }
 
     /**

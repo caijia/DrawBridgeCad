@@ -3,72 +3,55 @@ package com.caijia.drawbridgecad.component;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.text.TextUtils;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import android.graphics.Path;
+import android.graphics.PathMeasure;
 
 /**
- * Created by cai.jia 2018/11/26 15:24
+ * Created by cai.jia 2018/11/26 08:44
  */
 public class BridgeComponent2 extends BaseBridgeComponent {
 
-    private static final String REGEX = "(L\\d+-)(\\d+)";
-
-    /**
-     * 单位
-     */
-    private static final String H_UNIT = "m";
-
-    private Pattern pattern = Pattern.compile(REGEX);
-
-    private String wUnit;
+    private static final String W_UNIT = "m";
+    PathMeasure pathMeasure = new PathMeasure();
+    private String hUnit;
+    //弧形部分
+    private Path arcPath = new Path();
+    private int initHeight;
+    private float[] pos = new float[2];
+    private float[] tan = new float[2];
 
     public BridgeComponent2(Context context) {
         super(context);
+        initHeight = (int) dpToPx(26);
+        minScale = (int) dpToPx(50);
     }
 
-    /**
-     * @param canvas     canvas
-     * @param viewWidth  viewWidth
-     * @param viewHeight viewHeight
-     * @param widthStr   这个值必须是L1-1  这样的格式
-     * @param height     height
-     */
-    public void draw(Canvas canvas, int viewWidth, int viewHeight, String widthStr, int height) {
-        if (TextUtils.isEmpty(widthStr)) {
-            throw new RuntimeException("widthStr is null");
+    private void computeScaleAndStep(int viewWidth, int viewHeight, float width, int height) {
+        hCount = height;
+        hStep = 1;
+        hScale = (int) dpToPx(10);
+
+        int freeWidth = viewWidth - margin * 2;
+        float percentWidth = freeWidth / (hCount + 1);
+        if (percentWidth < minScale) {
+            freeWidth = (int) (minScale * (hCount + 1));
         }
-        boolean isMatcher = widthStr.matches(REGEX);
-        if (!isMatcher) {
-            throw new RuntimeException("widthStr format is error must be matcher " + REGEX);
+        wScale = (int) (freeWidth / width);
+        if (minScale > wScale) {
+            int stepCount = freeWidth / minScale;
+            wStep = (int) (width / stepCount);
         }
-        Matcher matcher = pattern.matcher(widthStr);
-        if (matcher.matches()) {
-            wUnit = matcher.group(1);
-            int width = Integer.parseInt(matcher.group(2));
-            draw(canvas, viewWidth, viewHeight, width, height);
-        }
+        wCount = width / wStep;
     }
 
-    private void computeScaleAndStep(int viewWidth, int viewHeight, int width, int height) {
-        int freeHeight = viewHeight - margin * 2;
-        hScale = freeHeight / height;
-        if (minScale > hScale) {
-            int stepCount = freeHeight / minScale;
-            hStep = height / stepCount;
-        }
-        hCount = (float) height / hStep;
-        wCount = width;
-    }
-
-    private void draw(Canvas canvas, int viewWidth, int viewHeight, int width, int height) {
+    public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, int height,
+                     String direction, int dun) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
-        //矩形宽度
+        //宽度
         float mapWidth = wCount * wScale * wStep;
 
-        //矩形高度
-        float mapHeight = hCount * hScale * hStep;
+        //高度
+        float mapHeight = initHeight + (hCount - 1) * hScale * hStep;
 
         float rectStartX = (viewWidth - mapWidth) / 2;
         float rectStartY = (viewHeight - mapHeight) / 2;
@@ -76,73 +59,66 @@ public class BridgeComponent2 extends BaseBridgeComponent {
         float rectEndX = rectStartX + mapWidth;
         float rectEndY = rectStartY + mapHeight;
 
-        //横上部编号
-        for (int i = 0; i < wCount; i++) {
+        //横刻度
+        canvas.drawLine(
+                rectStartX, rectStartY - rectToScaleSize,
+                rectEndX, rectStartY - rectToScaleSize, paint);
+
+        int floorWidth = (int) Math.floor(wCount) + 1;
+        for (int j = 0; j < floorWidth; j++) {
+            float i = j;
+            if (j == floorWidth - 1) {
+                i = wCount;
+            }
             canvas.drawLine(
                     rectStartX + i * wScale * wStep,
-                    rectStartY,
+                    rectStartY - scaleSize - rectToScaleSize,
                     rectStartX + i * wScale * wStep,
-                    rectEndY,
-                    paint);
-
-            savePaintParams();
-            paint.setTextSize(spToPx(10));
-            paint.setStrokeWidth(0);
-            paint.setTextAlign(Paint.Align.CENTER);
-
-            canvas.drawText(
-                    wUnit + (i + 1),
-                    rectStartX + i * wScale * wStep + wScale * wStep / 2,
                     rectStartY - rectToScaleSize,
                     paint);
 
-            if (i > 0 && i < wCount) {
-                int textHalfHeight = getTextBounds(wUnit + i, paint)[1] / 2;
-                canvas.drawText(
-                        wUnit + i,
-                        rectStartX + i * wScale * wStep,
-                        rectEndY + rectToScaleSize + textHalfHeight,
-                        paint);
-            }
-            restorePaintParams();
+            String text = removeZero(i * wStep + "") + W_UNIT;
+            drawText(canvas, Paint.Align.CENTER, text,
+                    rectStartX + i * wScale * wStep,
+                    rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
+                    false);
         }
 
-        //竖刻度
-        canvas.drawLine(
-                rectEndX + rectToScaleSize,
-                rectStartY,
-                rectEndX + rectToScaleSize,
-                rectEndY,
-                paint);
+        //横线
+        canvas.drawLine(rectStartX, rectStartY, rectEndX, rectStartY, paint);
 
-        int floorHeight = (int) Math.floor(hCount) + 1;
-        for (int k = 0; k < floorHeight; k++) {
-            float i = k;
-            if (k == floorHeight - 1) {
-                i = hCount;
-            }
-            canvas.drawLine(
-                    rectEndX + rectToScaleSize,
-                    rectStartY + i * hScale * hStep,
-                    rectEndX + rectToScaleSize + scaleSize,
-                    rectStartY + i * hScale * hStep,
-                    paint);
-
-            savePaintParams();
-            paint.setTextSize(spToPx(10));
-            paint.setStrokeWidth(0);
-            int textHalfHeight = getTextBounds((int) (i * hStep) + H_UNIT, paint)[1] / 2;
-            canvas.drawText(
-                    (int) (i * hStep) + H_UNIT,
-                    rectEndX + rectToScaleSize + scaleSize + textToScaleSize,
-                    rectStartY + i * hScale * hStep + textHalfHeight,
-                    paint);
-            restorePaintParams();
-        }
-
+        //圆弧 从第二个 - 倒数第二个 画弧
         savePaintParams();
         paint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(rectStartX, rectStartY, rectEndX, rectEndY, paint);
+        float percentWidth = mapWidth / (hCount + 1);
+        arcPath.reset();
+        arcPath.moveTo(rectStartX, rectEndY);
+        arcPath.rLineTo(percentWidth, 0);
+        arcPath.quadTo(
+                rectStartX + (rectEndX - rectStartX) / 2,
+                rectStartY + initHeight,
+                rectEndX - percentWidth,
+                rectStartY + initHeight);
+        arcPath.lineTo(rectEndX, rectStartY + initHeight);
+        canvas.drawPath(arcPath, paint);
+
+        pathMeasure.setPath(arcPath, false);
         restorePaintParams();
+
+        float pathLength = pathMeasure.getLength();
+        float percentPathLength = pathLength / (hCount + 1); //8等分
+        for (int k = 0; k < hCount + 2; k++) {  //9条线
+            pathMeasure.getPosTan(k * percentPathLength, pos, tan);
+            canvas.drawLine(pos[0], rectStartY, pos[0], pos[1], paint);
+
+            if (k < hCount + 1) {
+                hUnit = direction + dun + "-" + dun + "-";
+                String text = hUnit + k + "#";
+                drawText(canvas, Paint.Align.LEFT, text,
+                        pos[0],
+                        pos[1] + textToScaleSize,
+                        1f);
+            }
+        }
     }
 }

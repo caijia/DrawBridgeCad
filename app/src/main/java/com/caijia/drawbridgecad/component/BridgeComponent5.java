@@ -3,25 +3,13 @@ package com.caijia.drawbridgecad.component;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PathMeasure;
-import android.text.TextUtils;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by cai.jia 2018/11/26 08:44
  */
 public class BridgeComponent5 extends BaseBridgeComponent {
 
-    private static final String REGEX = "(L\\d+-\\d+-)(\\d+)";
-
-    /**
-     * 单位
-     */
     private static final String W_UNIT = "m";
-    private Pattern pattern = Pattern.compile(REGEX);
     private String hUnit;
 
     public BridgeComponent5(Context context) {
@@ -29,7 +17,7 @@ public class BridgeComponent5 extends BaseBridgeComponent {
         minScale = (int) dpToPx(60);
     }
 
-    private void computeScaleAndStep(int viewWidth, int viewHeight, int width, int height) {
+    private void computeScaleAndStep(int viewWidth, int viewHeight, float width, int height) {
         hCount = height;
         hStep = 1;
         hScale = (int) dpToPx(120);
@@ -39,32 +27,16 @@ public class BridgeComponent5 extends BaseBridgeComponent {
         if (percentWidth < minScale) {
             freeWidth = (int) (minScale * hCount);
         }
-        wScale = freeWidth / width;
+        wScale = (int) (freeWidth / width);
         if (minScale > wScale) {
             int stepCount = freeWidth / minScale;
-            wStep = width / stepCount;
+            wStep = (int) (width / stepCount);
         }
-        wCount = (float) width / wStep;
+        wCount = width / wStep;
     }
 
-    public void draw(Canvas canvas, int viewWidth, int viewHeight, int width, String heightExtra) {
-        if (TextUtils.isEmpty(heightExtra)) {
-            throw new RuntimeException("heightExtra is null");
-        }
-
-        boolean isMatcher = heightExtra.matches(REGEX);
-        if (!isMatcher) {
-            throw new RuntimeException("heightExtra format is error must be matcher " + REGEX);
-        }
-        Matcher matcher = pattern.matcher(heightExtra);
-        if (matcher.matches()) {
-            hUnit = matcher.group(1);
-            int height = Integer.parseInt(matcher.group(2));
-            draw(canvas, viewWidth, viewHeight, width, height);
-        }
-    }
-
-    private void draw(Canvas canvas, int viewWidth, int viewHeight, int width, int height) {
+    public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, int height,
+                     String direction, int dun) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
         //宽度
         float mapWidth = wCount * wScale * wStep;
@@ -99,16 +71,11 @@ public class BridgeComponent5 extends BaseBridgeComponent {
                     rectStartY - rectToScaleSize,
                     paint);
 
-            savePaintParams();
-            paint.setTextSize(spToPx(10));
-            paint.setStrokeWidth(0);
-            int textHalfWidth = getTextBounds((int) (i * wStep) + W_UNIT, paint)[0] / 2;
-            canvas.drawText(
-                    (int) (i * wStep) + W_UNIT,
-                    rectStartX + i * wScale * wStep - textHalfWidth,
+            String text = removeZero(i * wStep + "") + W_UNIT;
+            drawText(canvas, Paint.Align.CENTER, text,
+                    rectStartX + i * wScale * wStep,
                     rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
-                    paint);
-            restorePaintParams();
+                    false);
         }
 
         //矩形
@@ -126,21 +93,12 @@ public class BridgeComponent5 extends BaseBridgeComponent {
                     rectEndY,
                     paint
             );
+            hUnit = direction + dun + "-" + dun + "-";
             String text = hUnit + (int) (hCount - k) + "#";
-            drawText(canvas, text, rectStartX + percentWidth * k,rectEndY);
+            drawText(canvas, Paint.Align.LEFT, text,
+                    rectStartX + percentWidth * k,
+                    rectEndY + textToScaleSize,
+                    1f);
         }
-    }
-
-    private void drawText(Canvas canvas, String text, float x,float y) {
-        savePaintParams();
-        paint.setTextSize(spToPx(10));
-        paint.setStrokeWidth(0);
-        int[] textBounds = getTextBounds(text, paint);
-        canvas.drawText(
-                text,
-                x,
-                y + textBounds[1] + textToScaleSize,
-                paint);
-        restorePaintParams();
     }
 }

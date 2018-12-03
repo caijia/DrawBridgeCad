@@ -5,24 +5,14 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
-import android.text.TextUtils;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by cai.jia 2018/11/26 08:44
  */
 public class BridgeComponent4 extends BaseBridgeComponent {
 
-    private static final String REGEX = "(L\\d+-\\d+-)(\\d+)";
-
-    /**
-     * 单位
-     */
     private static final String W_UNIT = "m";
-    PathMeasure pathMeasure = new PathMeasure();
-    private Pattern pattern = Pattern.compile(REGEX);
+    private PathMeasure pathMeasure = new PathMeasure();
     private String hUnit;
     //弧形部分
     private Path arcPath = new Path();
@@ -36,7 +26,7 @@ public class BridgeComponent4 extends BaseBridgeComponent {
         minScale = (int) dpToPx(56);
     }
 
-    private void computeScaleAndStep(int viewWidth, int viewHeight, int width, int height) {
+    private void computeScaleAndStep(int viewWidth, int viewHeight, float width, float height) {
         hCount = height;
         hStep = 1;
         hScale = (int) dpToPx(10);
@@ -46,32 +36,16 @@ public class BridgeComponent4 extends BaseBridgeComponent {
         if (percentWidth < minScale) {
             freeWidth = (int) (minScale * (2 * hCount + 1));
         }
-        wScale = freeWidth / width;
+        wScale = (int) (freeWidth / width);
         if (minScale > wScale) {
             int stepCount = freeWidth / minScale;
-            wStep = width / stepCount;
+            wStep = (int) (width / stepCount);
         }
-        wCount = (float) width / wStep;
+        wCount = width / wStep;
     }
 
-    public void draw(Canvas canvas, int viewWidth, int viewHeight, int width, String heightExtra) {
-        if (TextUtils.isEmpty(heightExtra)) {
-            throw new RuntimeException("heightExtra is null");
-        }
-
-        boolean isMatcher = heightExtra.matches(REGEX);
-        if (!isMatcher) {
-            throw new RuntimeException("heightExtra format is error must be matcher " + REGEX);
-        }
-        Matcher matcher = pattern.matcher(heightExtra);
-        if (matcher.matches()) {
-            hUnit = matcher.group(1);
-            int height = Integer.parseInt(matcher.group(2));
-            draw(canvas, viewWidth, viewHeight, width, height);
-        }
-    }
-
-    private void draw(Canvas canvas, int viewWidth, int viewHeight, int width, int height) {
+    public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, int height,
+                     String direction, int left, int right) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
         //宽度
         float mapWidth = wCount * wScale * wStep;
@@ -106,16 +80,10 @@ public class BridgeComponent4 extends BaseBridgeComponent {
                     rectStartY - rectToScaleSize,
                     paint);
 
-            savePaintParams();
-            paint.setTextSize(spToPx(10));
-            paint.setStrokeWidth(0);
-            int textHalfWidth = getTextBounds((int) (i * wStep) + W_UNIT, paint)[0] / 2;
-            canvas.drawText(
-                    (int) (i * wStep) + W_UNIT,
-                    rectStartX + i * wScale * wStep - textHalfWidth,
+            String text = removeZero(i * wStep + "") + W_UNIT;
+            drawText(canvas, Paint.Align.CENTER, text, rectStartX + i * wScale * wStep,
                     rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
-                    paint);
-            restorePaintParams();
+                    false);
         }
 
         //横线
@@ -147,9 +115,12 @@ public class BridgeComponent4 extends BaseBridgeComponent {
                 pathMeasure.getPosTan(k * percentPathLength, pos, tan);
                 canvas.drawLine(pos[0], rectStartY, pos[0], pos[1], paint);
 
+                hUnit = direction + right + "-" + left + "-";
                 if (k != hCount) {
                     String text = hUnit + k + "#";
-                    drawText(canvas, text, pos[0]);
+                    drawText(canvas, Paint.Align.LEFT, text, pos[0],
+                            pos[1] + textToScaleSize,
+                            1f);
                 }
 
             } else {
@@ -157,22 +128,12 @@ public class BridgeComponent4 extends BaseBridgeComponent {
                         (2 * hCount + 1 - (k - hCount - 1)) * percentPathLength, pos, tan);
                 canvas.drawLine(pos[0], rectStartY, pos[0], pos[1], paint);
 
+                hUnit = direction + right + "-" + right + "-";
                 String text = hUnit + (int) (k - hCount - 1) + "#";
-                drawText(canvas, text, pos[0] - percentWidth);
+                drawText(canvas, Paint.Align.LEFT, text,
+                        pos[0] - percentWidth, pos[1] + textToScaleSize,
+                        1f);
             }
         }
-    }
-
-    private void drawText(Canvas canvas, String text, float x) {
-        savePaintParams();
-        paint.setTextSize(spToPx(10));
-        paint.setStrokeWidth(0);
-        int[] textBounds = getTextBounds(text, paint);
-        canvas.drawText(
-                text,
-                x,
-                pos[1] + textBounds[1] + textToScaleSize,
-                paint);
-        restorePaintParams();
     }
 }

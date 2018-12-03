@@ -24,12 +24,12 @@ public class BridgeView11 extends BaseBridgeView {
 
     public BridgeView11(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        bridgeComponent11 = new BridgeComponent11(context);
+        bridgeComponent11 = new BridgeComponent11(context, 80);
     }
 
     @Override
     public void drawBackgroundComponent(Canvas canvas) {
-        bridgeComponent11.draw(canvas, getWidth(), getHeight(), 36,
-                1.9f, 1.4f, 0.8f);
+        bridgeComponent11.draw(canvas, getWidth(), getHeight(), 36.5f,
+                1.2f, 1.4f, 0.9f);
     }
 }

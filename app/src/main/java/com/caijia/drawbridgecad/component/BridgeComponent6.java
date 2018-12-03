@@ -10,9 +10,6 @@ import android.graphics.Path;
  */
 public class BridgeComponent6 extends BaseBridgeComponent {
 
-    /**
-     * 单位
-     */
     private static final String UNIT = "m";
     private Path path = new Path();
     private float zWidth = 3;
@@ -22,29 +19,36 @@ public class BridgeComponent6 extends BaseBridgeComponent {
         super(context);
     }
 
-    private void computeScaleAndStep(int viewWidth, int viewHeight, int width, int height) {
+    private void computeScaleAndStep(int viewWidth, int viewHeight, float width, float height) {
         int freeWidth = viewWidth - margin * 2;
         int freeHeight = viewHeight - margin * 2;
         if (viewWidth > viewHeight * width / height) {
-            wScale = hScale = freeHeight / height;
+            wScale = hScale = (int) (freeHeight / height);
             if (minScale > hScale) {
                 int stepCount = freeHeight / minScale;
-                wStep = hStep = height / stepCount;
+                wStep = hStep = (int) (height / stepCount);
+            } else {
+                wScale = hScale = minScale;
             }
 
         } else {
-            hScale = wScale = freeWidth / width;
+            hScale = wScale = (int) (freeWidth / width);
             if (minScale > wScale) {
                 int stepCount = freeWidth / minScale;
-                hStep = wStep = width / stepCount;
+                hStep = wStep = (int) (width / stepCount);
+            } else {
+                wScale = hScale = minScale;
             }
         }
 
-        hCount = (float) height / hStep;
-        wCount = (float) width / wStep;
+        wCount = width / wStep;
+        hCount = height / hStep;
+
+        zWidth = width / 8;
+        zHeight = height / 8;
     }
 
-    public void draw(Canvas canvas, int viewWidth, int viewHeight, int width, int height) {
+    public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, float height) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
         //矩形宽度
         float mapWidth = wCount * wScale * wStep;
@@ -72,23 +76,16 @@ public class BridgeComponent6 extends BaseBridgeComponent {
             if (j == floorWidth - 1) {
                 i = wCount;
             }
-            canvas.drawLine(
-                    rectStartX + i * wScale * wStep,
-                    rectStartY - scaleSize - rectToScaleSize,
-                    rectStartX + i * wScale * wStep,
-                    rectStartY - rectToScaleSize,
-                    paint);
 
-            savePaintParams();
-            paint.setTextSize(spToPx(10));
-            paint.setStrokeWidth(0);
-            int textHalfWidth = getTextBounds((int) (i * wStep) + UNIT, paint)[0] / 2;
-            canvas.drawText(
-                    (int) (i * wStep) + UNIT,
-                    rectStartX + i * wScale * wStep - textHalfWidth,
+            float x = rectStartX + i * wScale * wStep;
+            canvas.drawLine(
+                    x, rectStartY - scaleSize - rectToScaleSize,
+                    x, rectStartY - rectToScaleSize, paint);
+
+            String text = removeZero(i * wStep + "") + UNIT;
+            drawText(canvas, Paint.Align.CENTER, text, x,
                     rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
-                    paint);
-            restorePaintParams();
+                    false);
         }
 
         //竖刻度
@@ -112,17 +109,11 @@ public class BridgeComponent6 extends BaseBridgeComponent {
                     rectStartY + i * hScale * hStep,
                     paint);
 
-
-            savePaintParams();
-            paint.setTextSize(spToPx(10));
-            paint.setStrokeWidth(0);
-            int textHalfHeight = getTextBounds((int) (i * hStep) + UNIT, paint)[1] / 2;
-            canvas.drawText(
-                    (int) (i * hStep) + UNIT,
+            String text = removeZero(i * hStep + "") + UNIT;
+            drawText(canvas, Paint.Align.LEFT, text,
                     rectEndX + rectToScaleSize + scaleSize + textToScaleSize,
-                    rectStartY + i * hScale * hStep + textHalfHeight,
-                    paint);
-            restorePaintParams();
+                    rectStartY + i * hScale * hStep,
+                    true);
         }
 
         savePaintParams();
