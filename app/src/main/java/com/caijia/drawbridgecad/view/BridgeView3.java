@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
+import com.caijia.drawbridgecad.BridgeParams;
 import com.caijia.drawbridgecad.component.BridgeComponent3;
 
 /**
@@ -13,6 +14,7 @@ import com.caijia.drawbridgecad.component.BridgeComponent3;
 public class BridgeView3 extends BaseBridgeView {
 
     private BridgeComponent3 bridgeComponent3;
+    private BridgeParams params;
 
     public BridgeView3(Context context) {
         this(context, null);
@@ -25,10 +27,35 @@ public class BridgeView3 extends BaseBridgeView {
     public BridgeView3(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         bridgeComponent3 = new BridgeComponent3(context);
+        params = new BridgeParams();
+        params.setLength(12.2f);
+        params.setDunShu(7);
+        params.setZuoDun(34);
     }
 
     @Override
     public void drawBackgroundComponent(Canvas canvas) {
-        bridgeComponent3.draw(canvas, getWidth(), getHeight(), 12.2f, 7, "L", 34);
+        bridgeComponent3.draw(canvas, getWidth(), getHeight(), params.getLength(),
+                params.getDunShu(), params.getDirection(), params.getZuoDun());
+    }
+
+    @Override
+    public void applyBridgeParams(BridgeParams params) {
+        this.params = params;
+    }
+
+    @Override
+    public BridgeParams getBridgeParams() {
+        return params;
+    }
+
+    @Override
+    public float getMapWidth() {
+        return bridgeComponent3.getBounds()[0];
+    }
+
+    @Override
+    public float getMapHeight() {
+        return bridgeComponent3.getBounds()[1];
     }
 }

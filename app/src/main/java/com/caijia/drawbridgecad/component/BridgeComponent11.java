@@ -49,8 +49,15 @@ public class BridgeComponent11 extends BaseBridgeComponent {
         wCount = width / wStep;
     }
 
+    private float yibanHeight;
+    private float fubanHeight;
+    private float dibanHeight;
+
     public void draw(Canvas canvas, int viewWidth, int viewHeight, float width,
                      float yibanHeight, float fubanHeight, float dibanHeight) {
+        this.yibanHeight = yibanHeight;
+        this.fubanHeight = fubanHeight;
+        this.dibanHeight = dibanHeight;
         computeScaleAndStep(viewWidth, viewHeight, width, yibanHeight, fubanHeight, dibanHeight);
 
         for (int i = 0; i < heights.length; i++) {
@@ -162,5 +169,15 @@ public class BridgeComponent11 extends BaseBridgeComponent {
             }
         }
         return total;
+    }
+
+    @Override
+    public float[] getBounds() {
+        //矩形宽度
+        float mapWidth = wCount * wScale * wStep + dWidth + 2 * margin;
+
+        //矩形高度
+        float mapHeight = (yibanHeight + fubanHeight + dibanHeight) * hScale + 2 * margin;
+        return new float[]{mapWidth, mapHeight};
     }
 }

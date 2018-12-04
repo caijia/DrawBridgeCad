@@ -131,4 +131,14 @@ public class BridgeComponent10 extends BaseBridgeComponent {
         canvas.drawPath(path, paint);
         restorePaintParams();
     }
+
+    @Override
+    public float[] getBounds() {
+        //矩形宽度
+        float mapWidth = wCount * wScale * wStep + 2 * margin;
+
+        //矩形高度
+        float mapHeight = hCount * hScale * hStep + 2 * margin;
+        return new float[]{mapWidth, mapHeight};
+    }
 }

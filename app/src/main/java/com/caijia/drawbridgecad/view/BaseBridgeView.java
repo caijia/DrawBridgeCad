@@ -10,6 +10,7 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.caijia.drawbridgecad.BridgeParams;
 import com.caijia.drawbridgecad.MoveGestureDetector;
 import com.caijia.drawbridgecad.component.ActionComponent;
 import com.caijia.drawbridgecad.component.DrawTextComponent;
@@ -80,6 +81,37 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
     }
 
     public abstract void drawBackgroundComponent(Canvas canvas);
+
+    public abstract void applyBridgeParams(BridgeParams params);
+
+    public abstract BridgeParams getBridgeParams();
+
+    public abstract float getMapWidth();
+
+    public abstract float getMapHeight();
+
+    public Bitmap createBitmap() {
+        int mapWidth = (int) getMapWidth();
+        int mapHeight = (int) getMapHeight();
+        int viewWidth = getWidth();
+        int viewHeight = getHeight();
+
+        Bitmap bitmap = Bitmap.createBitmap(mapWidth, mapHeight, Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bitmap);
+        int save = canvas.save();
+        canvas.translate((mapWidth - viewWidth) / 2, (mapHeight - viewHeight) / 2);
+        drawBackgroundComponent(canvas);
+        actionComponent.draw(canvas);
+        for (DrawTextComponent textComponent : textList) {
+            textComponent.drawText(
+                    canvas,
+                    viewWidth / 2 + xOffset,
+                    viewHeight / 2 + yOffset,
+                    spToPx(22));
+        }
+        canvas.restoreToCount(save);
+        return bitmap;
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -168,16 +200,5 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
     @Override
     public boolean onMoveGestureBeginTap(MotionEvent event) {
         return false;
-    }
-
-    /**
-     * 生产bitmap
-     *
-     * @return bitmap
-     */
-    public Bitmap saveToBitmap() {
-        setDrawingCacheEnabled(true);
-        buildDrawingCache();
-        return getDrawingCache();
     }
 }

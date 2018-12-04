@@ -5,13 +5,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.util.TypedValue;
 
 /**
  * Created by cai.jia 2018/11/27 08:40
  */
-public class BaseBridgeComponent {
+public abstract class BaseBridgeComponent {
 
     private static final int MIN_SCALE = 40;
     protected Paint paint;
@@ -113,9 +112,7 @@ public class BaseBridgeComponent {
         restorePaintParams();
     }
 
-    public RectF getDrawableBounds() {
-        return null;
-    }
+    public abstract float[] getBounds();
 
     /**
      * 画笔常用属性

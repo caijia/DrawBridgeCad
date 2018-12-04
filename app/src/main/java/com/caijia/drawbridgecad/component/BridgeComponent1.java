@@ -138,4 +138,14 @@ public class BridgeComponent1 extends BaseBridgeComponent {
         canvas.drawLine(rectStartX, rectStartY + splitLineHeight,
                 rectEndX, rectStartY + splitLineHeight, paint);
     }
+
+    @Override
+    public float[] getBounds() {
+        //矩形宽度
+        float mapWidth = wCount * wScale * wStep + dWidth + 2 * margin;
+
+        //矩形高度
+        float mapHeight = hCount * hStep * hScale + 2 * margin;
+        return new float[]{mapWidth, mapHeight};
+    }
 }

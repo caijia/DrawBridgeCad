@@ -44,9 +44,9 @@ public class BridgeComponent2 extends BaseBridgeComponent {
         wCount = width / wStep;
     }
 
-    public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, int height,
-                     String direction, int dun) {
-        computeScaleAndStep(viewWidth, viewHeight, width, height);
+    public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, int dunShu,
+                     String direction, int zuoDun) {
+        computeScaleAndStep(viewWidth, viewHeight, width, dunShu);
         //宽度
         float mapWidth = wCount * wScale * wStep;
 
@@ -112,7 +112,7 @@ public class BridgeComponent2 extends BaseBridgeComponent {
             canvas.drawLine(pos[0], rectStartY, pos[0], pos[1], paint);
 
             if (k < hCount + 1) {
-                hUnit = direction + dun + "-" + dun + "-";
+                hUnit = direction + zuoDun + "-" + zuoDun + "-";
                 String text = hUnit + k + "#";
                 drawText(canvas, Paint.Align.LEFT, text,
                         pos[0],
@@ -120,5 +120,15 @@ public class BridgeComponent2 extends BaseBridgeComponent {
                         1f);
             }
         }
+    }
+
+    @Override
+    public float[] getBounds() {
+        //宽度
+        float mapWidth = wCount * wScale * wStep + 2 * margin;
+
+        //高度
+        float mapHeight = initHeight + (hCount - 1) * hScale * hStep + 2 * margin;
+        return new float[]{mapWidth, mapHeight};
     }
 }

@@ -31,4 +31,14 @@ public class BridgeView6 extends BaseBridgeView {
     public void drawBackgroundComponent(Canvas canvas) {
         bridgeComponent6.draw(canvas, getWidth(), getHeight(), 4f, 4f);
     }
+
+    @Override
+    public float getMapWidth() {
+        return bridgeComponent6.getBounds()[0];
+    }
+
+    @Override
+    public float getMapHeight() {
+        return bridgeComponent6.getBounds()[1];
+    }
 }

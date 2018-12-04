@@ -134,4 +134,11 @@ public class BridgeComponent15 extends BaseBridgeComponent {
                     y, true);
         }
     }
+
+    @Override
+    public float[] getBounds() {
+        float mapWidth = wScale * (widths.length - 1) + 2 * radius + rectToRadiusSpace + radiusToArrowLine + 2 * margin;
+        float mapHeight = hScale * hStep * hCount + 2 * margin;
+        return new float[]{mapWidth, mapHeight};
+    }
 }

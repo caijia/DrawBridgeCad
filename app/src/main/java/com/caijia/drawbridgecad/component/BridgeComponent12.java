@@ -141,4 +141,14 @@ public class BridgeComponent12 extends BaseBridgeComponent {
                 rectStartX + (mapWidth - dWidth) / 2,
                 rectEndY + dpToPx(20), true);
     }
+
+    @Override
+    public float[] getBounds() {
+        //矩形宽度
+        float mapWidth = wCount * wScale * wStep + dWidth + 2 * margin;
+
+        //矩形高度
+        float mapHeight = hCount * hStep * hScale + 2 * margin;
+        return new float[]{mapWidth, mapHeight};
+    }
 }
