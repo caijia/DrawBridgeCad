@@ -10,7 +10,6 @@ import android.graphics.Path;
  */
 public class BridgeComponent7 extends BaseBridgeComponent {
 
-    private static final String UNIT = "m";
     private Path path = new Path();
     private float zHeight = 1;
 
@@ -22,18 +21,18 @@ public class BridgeComponent7 extends BaseBridgeComponent {
         int freeWidth = viewWidth - margin * 2;
         int freeHeight = viewHeight - margin * 2;
         if (viewWidth > viewHeight * width / height) {
-            wScale = hScale = (int) (freeHeight / height);
+            wScale = hScale = freeHeight / height;
             if (minScale > hScale) {
-                int stepCount = freeHeight / minScale;
+                int stepCount = (int) (freeHeight / minScale);
                 wStep = hStep = (int) (height / stepCount);
             } else {
                 wScale = hScale = minScale;
             }
 
         } else {
-            hScale = wScale = (int) (freeWidth / width);
+            hScale = wScale = freeWidth / width;
             if (minScale > wScale) {
-                int stepCount = freeWidth / minScale;
+                int stepCount = (int) (freeWidth / minScale);
                 hStep = wStep = (int) (width / stepCount);
             } else {
                 wScale = hScale = minScale;
@@ -46,7 +45,8 @@ public class BridgeComponent7 extends BaseBridgeComponent {
         zHeight = height / 8;
     }
 
-    public void draw(Canvas canvas, int viewWidth, int viewHeight, int width, int height) {
+    public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, float height,
+                     String unit) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
         //矩形宽度
         float mapWidth = wCount * wScale * wStep;
@@ -77,7 +77,7 @@ public class BridgeComponent7 extends BaseBridgeComponent {
                     x, rectStartY - scaleSize - rectToScaleSize,
                     x, rectStartY - rectToScaleSize, paint);
 
-            String text = removeZero(i * wStep + "") + UNIT;
+            String text = removeZero(i * wStep + "") + unit;
             drawText(canvas, Paint.Align.CENTER, text, x,
                     rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
                     false);
@@ -104,7 +104,7 @@ public class BridgeComponent7 extends BaseBridgeComponent {
                     rectStartY + i * hScale * hStep,
                     paint);
 
-            String text = removeZero(i * hStep + "") + UNIT;
+            String text = removeZero(i * hStep + "") + unit;
             drawText(canvas, Paint.Align.RIGHT, text,
                     rectStartX - rectToScaleSize - scaleSize - textToScaleSize,
                     rectStartY + i * hScale * hStep, true);

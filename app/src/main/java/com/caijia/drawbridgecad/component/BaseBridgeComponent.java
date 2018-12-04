@@ -26,10 +26,10 @@ public abstract class BaseBridgeComponent {
      * 文字到刻度的间隔
      */
     protected int textToScaleSize;
-    protected int minScale;
+    protected float minScale;
     protected int margin;
-    protected int wScale;
-    protected int hScale;
+    protected float wScale;
+    protected float hScale;
     protected int hStep = 1;
     protected int wStep = 1;
     protected float hCount;

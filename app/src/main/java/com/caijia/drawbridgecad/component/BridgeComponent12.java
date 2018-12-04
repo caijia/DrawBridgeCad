@@ -5,15 +5,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 
-import java.util.regex.Pattern;
-
 /**
  * Created by cai.jia 2018/11/26 08:44
  */
 public class BridgeComponent12 extends BaseBridgeComponent {
 
-    private static final String UNIT = "m";
-    private static final String REGEX = "(L\\d+-)(\\d+)";
     private static final String TEXT_KXB_CODE = "空心板编号";
     private static final String TEXT_JF_CODE = "铰缝编号";
     private float degree = 80;
@@ -21,7 +17,6 @@ public class BridgeComponent12 extends BaseBridgeComponent {
     private Path path = new Path();
     private double tanDegree;
     private String wUnit;
-    private Pattern pattern = Pattern.compile(REGEX);
 
     public BridgeComponent12(Context context) {
         super(context);
@@ -37,9 +32,9 @@ public class BridgeComponent12 extends BaseBridgeComponent {
         float avgHeight = freeHeight / height;
         hCount = height;
         if (avgHeight < minScale) {
-            int stepCount = freeHeight / minScale;
+            int stepCount = (int) (freeHeight / minScale);
             hStep = (int) (height / stepCount);
-            hScale = (int) avgHeight;
+            hScale = avgHeight;
             hCount = height / hStep;
         }
 
@@ -51,7 +46,7 @@ public class BridgeComponent12 extends BaseBridgeComponent {
     }
 
     public void draw(Canvas canvas, int viewWidth, int viewHeight, int width, float height,
-                     String direction, int dun) {
+                     String direction, int zuoDun, String unit) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
 
         //矩形宽度
@@ -68,9 +63,9 @@ public class BridgeComponent12 extends BaseBridgeComponent {
 
         float tanX = (float) (mapHeight / tanDegree);
         for (int i = 0; i < wCount; i++) {
-            wUnit = direction + dun + "-";
+            wUnit = direction + zuoDun + "-";
             String text = wUnit + (i + 1);
-            int incrementWidth = i * wScale * wStep;
+            float incrementWidth = i * wScale * wStep;
             drawText(canvas, Paint.Align.CENTER, text,
                     rectStartX + dWidth + incrementWidth + wScale * wStep / 2,
                     rectStartY - rectToScaleSize, false);
@@ -116,7 +111,7 @@ public class BridgeComponent12 extends BaseBridgeComponent {
                     rectStartY + curHeight,
                     paint);
 
-            String text = removeZero(i * hStep + "") + UNIT;
+            String text = removeZero(i * hStep + "") + unit;
             drawText(canvas, Paint.Align.LEFT, text,
                     rectEndX + rectToScaleSize + scaleSize + textToScaleSize - curOffsetX,
                     rectStartY + curHeight, true);

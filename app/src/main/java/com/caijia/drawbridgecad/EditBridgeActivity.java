@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.caijia.drawbridgecad.view.BaseBridgeView;
 import com.caijia.drawbridgecad.view.BridgeView1;
@@ -31,7 +30,7 @@ import com.caijia.drawbridgecad.view.BridgeView7;
 import com.caijia.drawbridgecad.view.BridgeView8;
 import com.caijia.drawbridgecad.view.BridgeView9;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class EditBridgeActivity extends AppCompatActivity {
 
     private static final String EXTRA_BRIDGE_TYPE = "extra:bridgeType";
     private BaseBridgeView bridgeView;
@@ -41,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int bridgeType;
 
     public static Intent getIntent(Context context, int bridgeType) {
-        Intent i = new Intent(context, MainActivity.class);
+        Intent i = new Intent(context, EditBridgeActivity.class);
         i.putExtra(EXTRA_BRIDGE_TYPE, bridgeType);
         return i;
     }
@@ -132,13 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etText = findViewById(R.id.et_text);
         rlEditText = findViewById(R.id.rl_edit_text);
 
-        TextView tvCancel = findViewById(R.id.tv_cancel);
-        TextView tvFinish = findViewById(R.id.tv_finish);
-
         dynamicAddBridgeView();
-
-        tvCancel.setOnClickListener(this);
-        tvFinish.setOnClickListener(this);
     }
 
     public void drawText(View view) {
@@ -176,31 +169,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 + "/caijia.jpg");
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.tv_cancel:
-                rlEditText.setVisibility(View.GONE);
-                Util.hideKeyboard(etText);
-                break;
+    public void cancelEditText(View view) {
+        rlEditText.setVisibility(View.GONE);
+        Util.hideKeyboard(etText);
+    }
 
-            case R.id.tv_finish:
-                Util.hideKeyboard(etText);
-                rlEditText.setVisibility(View.GONE);
-                String text = etText.getText().toString();
-                etText.setText("");
-                if (!TextUtils.isEmpty(text)) {
-                    bridgeView.drawText(text);
-                }
-                break;
+    public void finishEditText(View view) {
+        Util.hideKeyboard(etText);
+        rlEditText.setVisibility(View.GONE);
+        String text = etText.getText().toString();
+        etText.setText("");
+        if (!TextUtils.isEmpty(text)) {
+            bridgeView.drawText(text);
         }
     }
 
     public void edit(View view) {
-        BridgeParamsDialog dialog = BridgeParamsDialog.getInstance(bridgeType, )
-        dialog.setOnChangeBridgeParamsListener(params -> {
-
-        });
+        BridgeParamsDialog dialog = BridgeParamsDialog.getInstance(bridgeView.getBridgeParams());
+        dialog.setOnChangeBridgeParamsListener(params -> bridgeView.applyBridgeParams(params));
         dialog.show(getSupportFragmentManager(), "edit");
     }
 }

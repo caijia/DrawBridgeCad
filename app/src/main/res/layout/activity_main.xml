@@ -4,17 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context=".MainActivity">
+    tools:context=".EditBridgeActivity">
 
     <FrameLayout
         android:id="@+id/fl_bridge_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.caijia.drawbridgecad.view.BridgeView1
-            android:id="@+id/bridge_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
 
     </FrameLayout>
 
@@ -85,36 +81,36 @@
                 android:onClick="drawRect"
                 android:padding="12dp" />
 
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@null"
+                android:drawableLeft="@drawable/selector_draw_cancel"
+                android:gravity="center"
+                android:onClick="cancelPrevious"
+                android:padding="12dp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@null"
+                android:onClick="save"
+                android:padding="8dp"
+                android:text="保存"
+                android:textColor="@color/color_solid_1afa29_ffffff_r2"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@null"
+                android:onClick="edit"
+                android:padding="8dp"
+                android:text="修改"
+                android:textColor="@color/color_solid_1afa29_ffffff_r2"
+                android:textSize="14sp" />
+
         </RadioGroup>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/selector_draw_cancel"
-            android:gravity="center"
-            android:onClick="cancelPrevious"
-            android:padding="12dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackgroundBorderless"
-            android:onClick="save"
-            android:padding="8dp"
-            android:text="保存"
-            android:textColor="@color/color_solid_1afa29_ffffff_r2"
-            android:textSize="14sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackgroundBorderless"
-            android:onClick="edit"
-            android:padding="8dp"
-            android:text="修改"
-            android:textColor="@color/color_solid_1afa29_ffffff_r2"
-            android:textSize="14sp" />
-
     </LinearLayout>
 
     <RelativeLayout
@@ -124,25 +120,27 @@
         android:visibility="gone"
         tools:visibility="visible">
 
-        <TextView
+        <RadioButton
             android:id="@+id/tv_cancel"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:background="?selectableItemBackground"
+            android:layout_height="42dp"
+            android:button="@null"
             android:gravity="center"
+            android:onClick="cancelEditText"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:text="取消"
             android:textColor="@color/white"
             android:textSize="14sp" />
 
-        <TextView
+        <RadioButton
             android:id="@+id/tv_finish"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="42dp"
             android:layout_alignParentRight="true"
-            android:background="?selectableItemBackground"
+            android:button="@null"
             android:gravity="center"
+            android:onClick="finishEditText"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:text="完成"

@@ -20,6 +20,18 @@ public class Util {
         return context.getResources().getDisplayMetrics().heightPixels;
     }
 
+    public static String removeZero(Object s) {
+        return removeZero(s + "");
+    }
+
+    public static String removeZero(String s) {
+        if (s.indexOf(".") > 0) {
+            s = s.replaceAll("0+?$", "");//去掉后面无用的零
+            s = s.replaceAll("[.]$", "");//如小数点后面全是零则去掉小数点
+        }
+        return s;
+    }
+
     public static void saveBitmap(Bitmap bitmap, String imagePath) {
         if (bitmap == null || TextUtils.isEmpty(imagePath)) {
             return;

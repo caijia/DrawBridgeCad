@@ -11,7 +11,6 @@ import android.graphics.PathMeasure;
  */
 public class BridgeComponent4 extends BaseBridgeComponent {
 
-    private static final String W_UNIT = "m";
     private PathMeasure pathMeasure = new PathMeasure();
     private String hUnit;
     //弧形部分
@@ -36,16 +35,16 @@ public class BridgeComponent4 extends BaseBridgeComponent {
         if (percentWidth < minScale) {
             freeWidth = (int) (minScale * (2 * hCount + 1));
         }
-        wScale = (int) (freeWidth / width);
+        wScale = freeWidth / width;
         if (minScale > wScale) {
-            int stepCount = freeWidth / minScale;
+            int stepCount = (int) (freeWidth / minScale);
             wStep = (int) (width / stepCount);
         }
         wCount = width / wStep;
     }
 
     public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, int height,
-                     String direction, int left, int right) {
+                     String direction, int left, int right, String wUnit) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
         //宽度
         float mapWidth = wCount * wScale * wStep;
@@ -80,7 +79,7 @@ public class BridgeComponent4 extends BaseBridgeComponent {
                     rectStartY - rectToScaleSize,
                     paint);
 
-            String text = removeZero(i * wStep + "") + W_UNIT;
+            String text = removeZero(i * wStep + "") + wUnit;
             drawText(canvas, Paint.Align.CENTER, text, rectStartX + i * wScale * wStep,
                     rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
                     false);

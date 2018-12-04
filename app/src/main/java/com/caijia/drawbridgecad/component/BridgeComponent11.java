@@ -10,18 +10,19 @@ import android.graphics.Path;
  */
 public class BridgeComponent11 extends BaseBridgeComponent {
 
-    private static final String UNIT = "m";
     private float[] heights = new float[3];
     private String[] names = {"翼缘板", "腹板", "底板"};
     private float degree = 80;
     private int dWidth;
     private Path path = new Path();
     private double tanDegree;
+    private float yibanHeight;
+    private float fubanHeight;
+    private float dibanHeight;
 
     public BridgeComponent11(Context context) {
         super(context);
     }
-
     public BridgeComponent11(Context context, float degree) {
         super(context);
         this.degree = degree;
@@ -33,7 +34,7 @@ public class BridgeComponent11 extends BaseBridgeComponent {
         float pHeight = freeHeight / (yibanHeight + fubanHeight + dibanHeight);
         hCount = names.length;
         if (pHeight < minScale) {
-            hScale = (int) pHeight;
+            hScale = pHeight;
         }
 
         float mapHeight = (yibanHeight + fubanHeight + dibanHeight) * hScale;
@@ -42,19 +43,15 @@ public class BridgeComponent11 extends BaseBridgeComponent {
         int freeWidth = viewWidth - margin * 2 - 2 * dWidth;
         float pWidth = freeWidth / width;
         if (pWidth < minScale) {
-            int stepCount = freeWidth / minScale;
+            int stepCount = (int) (freeWidth / minScale);
             wStep = (int) (width / stepCount);
-            wScale = (int) pWidth;
+            wScale = pWidth;
         }
         wCount = width / wStep;
     }
 
-    private float yibanHeight;
-    private float fubanHeight;
-    private float dibanHeight;
-
     public void draw(Canvas canvas, int viewWidth, int viewHeight, float width,
-                     float yibanHeight, float fubanHeight, float dibanHeight) {
+                     float yibanHeight, float fubanHeight, float dibanHeight, String unit) {
         this.yibanHeight = yibanHeight;
         this.fubanHeight = fubanHeight;
         this.dibanHeight = dibanHeight;
@@ -99,7 +96,7 @@ public class BridgeComponent11 extends BaseBridgeComponent {
                     x, rectStartY - scaleSize - rectToScaleSize,
                     x, rectStartY - rectToScaleSize, paint);
 
-            String text = removeZero(i * wStep + "") + UNIT;
+            String text = removeZero(i * wStep + "") + unit;
             drawText(canvas, Paint.Align.CENTER, text,
                     x, rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
                     false);
@@ -135,7 +132,7 @@ public class BridgeComponent11 extends BaseBridgeComponent {
             }
 
             if (i < hCount) {
-                String text = heights[i] + UNIT;
+                String text = heights[i] + unit;
                 drawText(canvas, Paint.Align.LEFT, text,
                         rectEndX + rectToScaleSize + scaleSize + textToScaleSize,
                         rectStartY + totalHeight + heights[i] / 2 * hScale,

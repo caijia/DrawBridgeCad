@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.caijia.drawbridgecad.BridgeParams;
+import com.caijia.drawbridgecad.Constants;
 import com.caijia.drawbridgecad.component.BridgeComponent4;
 
 /**
@@ -32,12 +33,14 @@ public class BridgeView4 extends BaseBridgeView {
         params.setDunShu(6);
         params.setZuoDun(36);
         params.setYouDun(35);
+        params.setDirection(Constants.BRIDGE_L);
     }
 
     @Override
     public void drawBackgroundComponent(Canvas canvas) {
         bridgeComponent4.draw(canvas, getWidth(), getHeight(), params.getLength(),
-                params.getDunShu(), params.getDirection(), params.getZuoDun(), params.getYouDun());
+                params.getDunShu(), params.getDirection(), params.getZuoDun(), params.getYouDun(),
+                params.getUnit());
     }
 
     @Override

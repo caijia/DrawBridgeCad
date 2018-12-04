@@ -76,36 +76,41 @@ public class BridgeParamsDialog extends DialogFragment {
         rlDirection.setVisibility(TextUtils.isEmpty(bridgeParams.getDirection()) ? View.GONE : View.VISIBLE);
         rlUnit.setVisibility(TextUtils.isEmpty(bridgeParams.getUnit()) ? View.GONE : View.VISIBLE);
 
-        etLength.setText(String.valueOf(bridgeParams.getLength()));
-        etWidth.setText(String.valueOf(bridgeParams.getWidth()));
-        etDiban.setText(String.valueOf(bridgeParams.getDiBan()));
-        etFuban.setText(String.valueOf(bridgeParams.getFuBan()));
-        etYiyuanban.setText(String.valueOf(bridgeParams.getYiYuanBan()));
+        etLength.setText(Util.removeZero(bridgeParams.getLength()));
+        etWidth.setText(Util.removeZero(bridgeParams.getWidth()));
+        etDiban.setText(Util.removeZero(bridgeParams.getDiBan()));
+        etFuban.setText(Util.removeZero(bridgeParams.getFuBan()));
+        etYiyuanban.setText(Util.removeZero(bridgeParams.getYiYuanBan()));
         etZuodun.setText(String.valueOf(bridgeParams.getZuoDun()));
         etYoudun.setText(String.valueOf(bridgeParams.getYouDun()));
         etDunshu.setText(String.valueOf(bridgeParams.getDunShu()));
 
         String direction = bridgeParams.getDirection();
-        switch (direction) {
-            case Constants.BRIDGE_L:
-                rbLeft.setChecked(true);
-                break;
+        if (!TextUtils.isEmpty(direction)) {
+            switch (direction) {
+                case Constants.BRIDGE_L:
+                    rbLeft.setChecked(true);
+                    break;
 
-            case Constants.BRIDGE_R:
-                rbRight.setChecked(true);
-                break;
+                case Constants.BRIDGE_R:
+                    rbRight.setChecked(true);
+                    break;
+            }
         }
 
         String unit = bridgeParams.getUnit();
-        switch (unit) {
-            case Constants.UNIT_CM:
-                rbCm.setChecked(true);
-                break;
+        if (!TextUtils.isEmpty(unit)) {
+            switch (unit) {
+                case Constants.UNIT_CM:
+                    rbCm.setChecked(true);
+                    break;
 
-            case Constants.UNIT_M:
-                rbM.setChecked(true);
-                break;
+                case Constants.UNIT_M:
+                    rbM.setChecked(true);
+                    break;
+            }
         }
+
     }
 
     @Override
@@ -180,8 +185,13 @@ public class BridgeParamsDialog extends DialogFragment {
         String dunShu = checkParams(etDunshu, rlDunshu, "请输入墩数");
         if (dunShu == null) return;
 
-        String direction = rbLeft.isChecked() ? Constants.BRIDGE_L : Constants.BRIDGE_R;
-        String unit = rbCm.isChecked() ? Constants.UNIT_CM : Constants.UNIT_M;
+        String direction = rbLeft.isChecked()
+                ? Constants.BRIDGE_L
+                : rbRight.isChecked() ? Constants.BRIDGE_R : "";
+
+        String unit = rbCm.isChecked()
+                ? Constants.UNIT_CM
+                : rbM.isChecked() ? Constants.UNIT_M : "";
 
         bridgeParams.setLength(TextUtils.isEmpty(length) ? -1 : Float.parseFloat(length));
         bridgeParams.setWidth(TextUtils.isEmpty(width) ? -1 : Float.parseFloat(width));
@@ -227,7 +237,7 @@ public class BridgeParamsDialog extends DialogFragment {
         }
         final WindowManager.LayoutParams params = this.getDialog().getWindow().getAttributes();
         params.width = (int) (Util.getScreenWidth(getContext()) * 0.5f);
-        params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
         params.gravity = Gravity.RIGHT;
         this.getDialog().getWindow().setAttributes(params);
         getDialog().setCanceledOnTouchOutside(true);

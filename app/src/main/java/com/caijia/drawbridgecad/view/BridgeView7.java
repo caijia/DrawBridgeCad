@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
+import com.caijia.drawbridgecad.BridgeParams;
 import com.caijia.drawbridgecad.component.BridgeComponent7;
 
 /**
@@ -13,6 +14,7 @@ import com.caijia.drawbridgecad.component.BridgeComponent7;
 public class BridgeView7 extends BaseBridgeView {
 
     private BridgeComponent7 bridgeComponent7;
+    private BridgeParams params;
 
     public BridgeView7(Context context) {
         this(context, null);
@@ -25,11 +27,26 @@ public class BridgeView7 extends BaseBridgeView {
     public BridgeView7(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         bridgeComponent7 = new BridgeComponent7(context);
+        params = new BridgeParams();
+        params.setLength(8f);
+        params.setWidth(4f);
     }
 
     @Override
     public void drawBackgroundComponent(Canvas canvas) {
-        bridgeComponent7.draw(canvas, getWidth(), getHeight(), 8, 4);
+        bridgeComponent7.draw(canvas, getWidth(), getHeight(), params.getLength(),
+                params.getWidth(), params.getUnit());
+    }
+
+    @Override
+    public void applyBridgeParams(BridgeParams params) {
+        this.params = params;
+        invalidate();
+    }
+
+    @Override
+    public BridgeParams getBridgeParams() {
+        return params;
     }
 
     @Override

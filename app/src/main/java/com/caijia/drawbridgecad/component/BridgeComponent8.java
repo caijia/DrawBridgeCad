@@ -9,10 +9,11 @@ import android.graphics.Paint;
  */
 public class BridgeComponent8 extends BaseBridgeComponent {
 
-    private static final String UNIT = "m";
     private float[] heights = new float[5];
     private String[] names = {"翼缘板", "腹板", "底板", "腹板", "翼缘板"};
-
+    private float yibanHeight;
+    private float fubanHeight;
+    private float dibanHeight;
     public BridgeComponent8(Context context) {
         super(context);
     }
@@ -22,9 +23,9 @@ public class BridgeComponent8 extends BaseBridgeComponent {
         int freeWidth = viewWidth - margin * 2;
         float pWidth = freeWidth / width;
         if (pWidth < minScale) {
-            int stepCount = freeWidth / minScale;
+            int stepCount = (int) (freeWidth / minScale);
             wStep = (int) (width / stepCount);
-            wScale = (int) pWidth;
+            wScale = pWidth;
         }
         wCount = width / wStep;
 
@@ -32,16 +33,12 @@ public class BridgeComponent8 extends BaseBridgeComponent {
         float pHeight = freeHeight / (yibanHeight * 2 + fubanHeight * 2 + dibanHeight);
         hCount = names.length;
         if (pHeight < minScale) {
-            hScale = (int) pHeight;
+            hScale = pHeight;
         }
     }
 
-    private float yibanHeight;
-    private float fubanHeight;
-    private float dibanHeight;
-
     public void draw(Canvas canvas, int viewWidth, int viewHeight, float width,
-                     float yibanHeight, float fubanHeight, float dibanHeight) {
+                     float yibanHeight, float fubanHeight, float dibanHeight, String unit) {
         this.yibanHeight = yibanHeight;
         this.fubanHeight = fubanHeight;
         this.dibanHeight = dibanHeight;
@@ -86,7 +83,7 @@ public class BridgeComponent8 extends BaseBridgeComponent {
                     rectStartY - rectToScaleSize,
                     paint);
 
-            String text = removeZero(i * wStep + "") + UNIT;
+            String text = removeZero(i * wStep + "") + unit;
             drawText(canvas, Paint.Align.CENTER, text,
                     rectStartX + i * wScale * wStep,
                     rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
@@ -118,7 +115,7 @@ public class BridgeComponent8 extends BaseBridgeComponent {
                     paint);
 
             if (i < hCount) {
-                String text = heights[i] + UNIT;
+                String text = heights[i] + unit;
                 drawText(canvas, Paint.Align.LEFT, text,
                         rectEndX + rectToScaleSize + scaleSize + textToScaleSize,
                         rectStartY + totalHeight + heights[i] / 2 * hScale,

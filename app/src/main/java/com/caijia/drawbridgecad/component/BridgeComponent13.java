@@ -10,7 +10,6 @@ import android.graphics.Path;
  */
 public class BridgeComponent13 extends BaseBridgeComponent {
 
-    private String unit = "cm";
     private float degree = 80;
     private int dWidth;
     private Path path = new Path();
@@ -20,10 +19,14 @@ public class BridgeComponent13 extends BaseBridgeComponent {
         super(context);
     }
 
-    public BridgeComponent13(Context context, float degree, String unit) {
+    public BridgeComponent13(Context context, float degree) {
         super(context);
         this.degree = degree;
-        this.unit = unit;
+    }
+
+
+    public void setDegree(float degree) {
+        this.degree = degree;
     }
 
     private void computeScaleAndStep(int viewWidth, int viewHeight, float width, float height) {
@@ -31,7 +34,7 @@ public class BridgeComponent13 extends BaseBridgeComponent {
         float avgHeight = freeHeight / height;
         hCount = height;
         if (avgHeight < minScale) {
-            int stepCount = freeHeight / minScale;
+            int stepCount = (int) (freeHeight / minScale);
             hStep = (int) (height / stepCount);
             hScale = (int) avgHeight;
             hCount = height / hStep;
@@ -45,14 +48,15 @@ public class BridgeComponent13 extends BaseBridgeComponent {
         float avgWidth = freeWidth / width;
         wCount = width;
         if (avgWidth < minScale) {
-            int stepCount = freeWidth / minScale;
+            int stepCount = (int) (freeWidth / minScale);
             wStep = (int) (width / stepCount);
             wScale = (int) avgWidth;
             wCount = width / wStep;
         }
     }
 
-    public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, float height) {
+    public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, float height,
+                     String unit) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
 
         //矩形宽度

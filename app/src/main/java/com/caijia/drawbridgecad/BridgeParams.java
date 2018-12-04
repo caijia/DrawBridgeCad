@@ -24,7 +24,6 @@ public class BridgeParams implements Serializable {
         zuoDun = -1;
         youDun = -1;
         dunShu = -1;
-        direction = Constants.BRIDGE_L;
         unit = Constants.UNIT_M;
     }
 

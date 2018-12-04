@@ -8,7 +8,6 @@ import android.graphics.Path;
 public class BridgeComponent15 extends BaseBridgeComponent {
 
     private static final String TEXT = "桩号增大方向";
-    private static final String UNIT = "m";
     private int[] widths = {0, 90, 180, 270, 0};
     private float radius = dpToPx(40);
     private float rectToRadiusSpace = dpToPx(40);
@@ -27,9 +26,9 @@ public class BridgeComponent15 extends BaseBridgeComponent {
         float avgHeight = freeHeight / height;
         hCount = height;
         if (avgHeight < minScale) {
-            int stepCount = freeHeight / minScale;
+            int stepCount = (int) (freeHeight / minScale);
             hStep = (int) (height / stepCount);
-            hScale = (int) avgHeight;
+            hScale = avgHeight;
             hCount = height / hStep;
         }
 
@@ -37,7 +36,7 @@ public class BridgeComponent15 extends BaseBridgeComponent {
         wScale = minScale;
     }
 
-    public void draw(Canvas canvas, int viewWidth, int viewHeight, float height) {
+    public void draw(Canvas canvas, int viewWidth, int viewHeight, float height, String unit) {
         computeScaleAndStep(viewHeight, height);
 
         float mapWidth = wScale * (widths.length - 1) + 2 * radius + rectToRadiusSpace + radiusToArrowLine;
@@ -128,7 +127,7 @@ public class BridgeComponent15 extends BaseBridgeComponent {
                     endX + rectToScaleSize, y,
                     endX + rectToScaleSize + scaleSize, y, paint);
 
-            String text = removeZero(i * hStep + "") + UNIT;
+            String text = removeZero(i * hStep + "") + unit;
             drawText(canvas, Paint.Align.LEFT, text,
                     endX + rectToScaleSize + scaleSize + textToScaleSize,
                     y, true);
