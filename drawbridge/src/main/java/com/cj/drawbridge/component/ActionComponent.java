@@ -34,7 +34,7 @@ public class ActionComponent implements MoveGestureDetector.OnMoveGestureListene
     private MoveGestureDetector gestureDetector;
     private View parentView;
     private Context context;
-    private Matrix matrix;
+    private Matrix parentInsertMatrix = new Matrix();
 
     public ActionComponent(View parentView) {
         init(parentView);
@@ -73,7 +73,7 @@ public class ActionComponent implements MoveGestureDetector.OnMoveGestureListene
     }
 
     public void setMatrix(Matrix matrix) {
-        this.matrix = matrix;
+        matrix.invert(parentInsertMatrix);
     }
 
     private void drawShape(Canvas canvas, Shape s) {
@@ -143,11 +143,11 @@ public class ActionComponent implements MoveGestureDetector.OnMoveGestureListene
 
     private float[] getMapPoint(float x, float y) {
         float[] src = {x, y};
-        if (matrix == null) {
+        if (parentInsertMatrix == null) {
             return src;
         }
         float[] dst = new float[2];
-        matrix.mapPoints(dst, src);
+        parentInsertMatrix.mapPoints(dst, src);
         return dst;
     }
 

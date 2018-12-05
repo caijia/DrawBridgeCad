@@ -28,7 +28,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
      * 移动文字组件
      */
     private static final int ACTION_MOVE_TEXT = 3;
-    private static final int EXTRA_HIT_SIZE = 4;
+    private static final int EXTRA_HIT_SIZE = 8;
     /**
      * 是否显示文字的边框和操作按钮
      */
@@ -96,7 +96,8 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
     private String text;
     private float textSize;
     private Matrix textMatrix = new Matrix();
-    private Matrix parentInsertMatrix;
+    private Matrix parentInsertMatrix = new Matrix();
+    private float minTextRectWidth;
 
     public DrawTextComponent(View parentView, String text, float textSize) {
         this.text = text;
@@ -108,6 +109,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         paint.setColor(Color.RED);
         paint.setStrokeWidth(dpToPx(1));
         radius = (int) dpToPx(12);
+        minTextRectWidth = dpToPx(46);
         circleIconColor = Color.parseColor("#ddffffff");
         moveGestureDetector = new MoveGestureDetector(context, this);
     }
@@ -206,23 +208,27 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         float left = points[0];
         float top = points[1];
 
+        float insertScale = getMatrixScale(parentInsertMatrix);
+        float mapRadius = radius * insertScale;
+
         //绘制文字左上角关闭图标
         savePaintParams(paint);
         paint.setColor(circleIconColor);
         if (!showTextDecoration) {
             paint.setColor(Color.TRANSPARENT);
         }
-        canvas.drawCircle(left, top, radius, paint);
+        canvas.drawCircle(left, top, mapRadius, paint);
         restorePaintParams(paint);
 
         //绘制关闭图标的X
         savePaintParams(paint);
+        paint.setStrokeWidth(paint.getStrokeWidth() * insertScale);
         paint.setColor(Color.GRAY);
         if (!showTextDecoration) {
             paint.setColor(Color.TRANSPARENT);
         }
-        float spacing = radius / 3f;
-        float radiusSin45 = (float) (Math.sin(Math.toRadians(45)) * (radius - spacing));
+        float spacing = mapRadius / 3f;
+        float radiusSin45 = (float) (Math.sin(Math.toRadians(45)) * (mapRadius - spacing));
 
         canvas.drawLine(
                 left - radiusSin45,
@@ -260,23 +266,26 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         float mapRight = points[0];
         float mapBottom = points[1];
 
-        float spacing = radius / 3f;
+        float insertScale = getMatrixScale(parentInsertMatrix);
+        float mapRadius = radius * insertScale;
+        float spacing = mapRadius / 3f;
         //绘制文字右下角操作图标
         savePaintParams(paint);
         paint.setColor(circleIconColor);
         if (!showTextDecoration) {
             paint.setColor(Color.TRANSPARENT);
         }
-        canvas.drawCircle(mapRight, mapBottom, radius, paint);
+        canvas.drawCircle(mapRight, mapBottom, mapRadius, paint);
         restorePaintParams(paint);
 
         savePaintParams(paint);
         paint.setColor(Color.GRAY);
+        paint.setStrokeWidth(paint.getStrokeWidth() * insertScale);
         if (!showTextDecoration) {
             paint.setColor(Color.TRANSPARENT);
         }
-        int arrowWidth = radius / 2;
-        float radiusSin45 = (float) (Math.sin(Math.toRadians(45)) * (radius - spacing));
+        int arrowWidth = (int) (mapRadius / 2);
+        float radiusSin45 = (float) (Math.sin(Math.toRadians(45)) * (mapRadius - spacing));
         float left = mapRight - radiusSin45;
         float top = mapBottom - radiusSin45;
         float right = mapRight + radiusSin45;
@@ -333,14 +342,17 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
                                     int pointerIndex, float dx, float dy,
                                     float distanceX, float distanceY) {
 
+        if (downEvent == null || currentEvent == null) {
+            return;
+        }
+
         float[] downPoint = getMapPointFromParentMatrix(downEvent.getX(),
                 downEvent.getY());
         float[] currentPoint = getMapPointFromParentMatrix(currentEvent.getX(pointerIndex),
                 currentEvent.getY(pointerIndex));
-
+        float insertScale = getMatrixScale(parentInsertMatrix);
         switch (action) {
             case ACTION_MOVE_TEXT:
-                float insertScale = getMatrixScale(parentInsertMatrix);
                 textOffsetX += dx * insertScale;
                 textOffsetY += dy * insertScale;
                 break;
@@ -355,6 +367,10 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
                 double curDis = toCenterDistance(currentPoint[0], currentPoint[1]);
                 float deltaScale = (float) ((curDis - downDis) / startDis);
                 textScale = deltaScale + previousTextScale;
+                float width = textRect.width();
+                if (width * textScale / insertScale < minTextRectWidth) {
+                    textScale = minTextRectWidth / width * insertScale;
+                }
                 break;
         }
         parentView.invalidate();
@@ -373,6 +389,10 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
 
     @Override
     public boolean onMoveGestureBeginTap(MotionEvent event) {
+        if (event == null) {
+            return false;
+        }
+
         float[] point = getMapPointFromParentMatrix(event.getX(), event.getY());
         float[] points = mapPoint(point[0], point[1]);
         float x = points[0];
@@ -459,8 +479,8 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         return dst;
     }
 
-    public void setParentInsertMatrix(Matrix parentInsertMatrix) {
-        this.parentInsertMatrix = parentInsertMatrix;
+    public void setMatrix(Matrix matrix) {
+        matrix.invert(parentInsertMatrix);
     }
 
     private float[] getMapPointFromParentMatrix(float x, float y) {

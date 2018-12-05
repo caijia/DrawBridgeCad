@@ -35,7 +35,6 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
     private boolean move = true;
     private float scale = 1;
     private float sourceScale = 1;
-    private Matrix canvasInsertMatrix = new Matrix();
     private Matrix canvasMatrix = new Matrix();
     private float preScaleFocusX;
     private float preScaleFocusY;
@@ -72,12 +71,6 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-        changeCanvasMatrix();
-        actionComponent.setMatrix(canvasInsertMatrix);
-        for (DrawTextComponent textComponent : textList) {
-            textComponent.setParentInsertMatrix(canvasInsertMatrix);
-        }
 
         int viewWidth = getWidth();
         int viewHeight = getHeight();
@@ -193,6 +186,7 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
                                     float distanceY) {
         xOffset += dx;
         yOffset += dy;
+        changeCanvasMatrix();
         invalidate();
     }
 
@@ -206,7 +200,10 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
         }
         canvasMatrix.postTranslate(xOffset, yOffset);
 
-        canvasMatrix.invert(canvasInsertMatrix);
+        actionComponent.setMatrix(canvasMatrix);
+        for (DrawTextComponent drawTextComponent : textList) {
+            drawTextComponent.setMatrix(canvasMatrix);
+        }
     }
 
     @Override
@@ -219,6 +216,8 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
 
     @Override
     public boolean onMoveGestureBeginTap(MotionEvent event) {
+        changeCanvasMatrix();
+        invalidate();
         return false;
     }
 
@@ -227,6 +226,7 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
         scale = sourceScale * detector.getScaleFactor();
         preScaleFocusX = detector.getFocusX();
         preScaleFocusY = detector.getFocusY();
+        changeCanvasMatrix();
         invalidate();
         return false;
     }
