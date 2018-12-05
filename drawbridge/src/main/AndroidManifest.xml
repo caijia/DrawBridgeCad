@@ -1,0 +1,13 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.cj.drawbridge">
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application>
+        <activity
+            android:name=".EditBridgeActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/EditBridgeTheme"></activity>
+    </application>
+</manifest>
