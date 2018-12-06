@@ -28,7 +28,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
      * 移动文字组件
      */
     private static final int ACTION_MOVE_TEXT = 3;
-    private static final int EXTRA_HIT_SIZE = 8;
+    private static final int EXTRA_HIT_SIZE = 20;
     /**
      * 是否显示文字的边框和操作按钮
      */
@@ -109,7 +109,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         paint.setColor(Color.RED);
         paint.setStrokeWidth(dpToPx(1));
         radius = (int) dpToPx(12);
-        minTextRectWidth = dpToPx(46);
+        minTextRectWidth = dpToPx(100);
         circleIconColor = Color.parseColor("#ddffffff");
         moveGestureDetector = new MoveGestureDetector(context, this);
     }
@@ -165,9 +165,9 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         restorePaintParams(paint);
 
         textRect.set(
-                centerX - bounds[0] / 2,
+                centerX - bounds[0] / 2 - dpToPx(EXTRA_HIT_SIZE),
                 centerY - bounds[1] / 2,
-                centerX + bounds[0] / 2,
+                centerX + bounds[0] / 2 + dpToPx(EXTRA_HIT_SIZE),
                 centerY + bounds[1] / 2);
         textRect.inset(-radius, -radius);
         savePaintParams(paint);
@@ -193,7 +193,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         paint.setStrokeWidth(0);
         Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
         float baseline = (textRect.bottom + textRect.top - fontMetrics.bottom - fontMetrics.top) / 2;
-        canvas.drawText(text, textRect.left + radius, baseline, paint);
+        canvas.drawText(text, textRect.left + radius + dpToPx(EXTRA_HIT_SIZE), baseline, paint);
         restorePaintParams(paint);
     }
 
@@ -208,8 +208,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         float left = points[0];
         float top = points[1];
 
-        float insertScale = getMatrixScale(parentInsertMatrix);
-        float mapRadius = radius * insertScale;
+        float mapRadius = radius;
 
         //绘制文字左上角关闭图标
         savePaintParams(paint);
@@ -222,7 +221,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
 
         //绘制关闭图标的X
         savePaintParams(paint);
-        paint.setStrokeWidth(paint.getStrokeWidth() * insertScale);
+        paint.setStrokeWidth(paint.getStrokeWidth());
         paint.setColor(Color.GRAY);
         if (!showTextDecoration) {
             paint.setColor(Color.TRANSPARENT);
@@ -266,26 +265,24 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         float mapRight = points[0];
         float mapBottom = points[1];
 
-        float insertScale = getMatrixScale(parentInsertMatrix);
-        float mapRadius = radius * insertScale;
-        float spacing = mapRadius / 3f;
+        float spacing = radius / 3f;
         //绘制文字右下角操作图标
         savePaintParams(paint);
         paint.setColor(circleIconColor);
         if (!showTextDecoration) {
             paint.setColor(Color.TRANSPARENT);
         }
-        canvas.drawCircle(mapRight, mapBottom, mapRadius, paint);
+        canvas.drawCircle(mapRight, mapBottom, radius, paint);
         restorePaintParams(paint);
 
         savePaintParams(paint);
         paint.setColor(Color.GRAY);
-        paint.setStrokeWidth(paint.getStrokeWidth() * insertScale);
+        paint.setStrokeWidth(paint.getStrokeWidth());
         if (!showTextDecoration) {
             paint.setColor(Color.TRANSPARENT);
         }
-        int arrowWidth = (int) (mapRadius / 2);
-        float radiusSin45 = (float) (Math.sin(Math.toRadians(45)) * (mapRadius - spacing));
+        int arrowWidth = (int) (radius / 2);
+        float radiusSin45 = (float) (Math.sin(Math.toRadians(45)) * (radius - spacing));
         float left = mapRight - radiusSin45;
         float top = mapBottom - radiusSin45;
         float right = mapRight + radiusSin45;
@@ -458,7 +455,6 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         float[] points = {textRect.left, textRect.top};
         RectF dst = new RectF(points[0] - radius, points[1] - radius,
                 points[0] + radius, points[1] + radius);
-        dst.inset(-dpToPx(EXTRA_HIT_SIZE), -dpToPx(EXTRA_HIT_SIZE));
         return dst;
     }
 
@@ -466,7 +462,6 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         float[] points = {textRect.right, textRect.bottom};
         RectF dst = new RectF(points[0] - radius, points[1] - radius,
                 points[0] + radius, points[1] + radius);
-        dst.inset(-dpToPx(EXTRA_HIT_SIZE), -dpToPx(EXTRA_HIT_SIZE));
         return dst;
     }
 

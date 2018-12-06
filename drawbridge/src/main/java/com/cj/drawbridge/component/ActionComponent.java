@@ -10,9 +10,9 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.TypedValue;
 import android.view.MotionEvent;
-import android.view.View;
 
 import com.cj.drawbridge.helper.MoveGestureDetector;
+import com.cj.drawbridge.widget.BaseBridgeView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +32,11 @@ public class ActionComponent implements MoveGestureDetector.OnMoveGestureListene
     private Paint paint;
     private Shape shape;
     private MoveGestureDetector gestureDetector;
-    private View parentView;
+    private BaseBridgeView parentView;
     private Context context;
     private Matrix parentInsertMatrix = new Matrix();
 
-    public ActionComponent(View parentView) {
+    public ActionComponent(BaseBridgeView parentView) {
         init(parentView);
     }
 
@@ -44,7 +44,7 @@ public class ActionComponent implements MoveGestureDetector.OnMoveGestureListene
         return context;
     }
 
-    public void init(View parentView) {
+    public void init(BaseBridgeView parentView) {
         this.parentView = parentView;
         this.context = parentView.getContext();
         shapeList = new ArrayList<>();
@@ -142,6 +142,8 @@ public class ActionComponent implements MoveGestureDetector.OnMoveGestureListene
     }
 
     private float[] getMapPoint(float x, float y) {
+        parentInsertMatrix.reset();
+        parentView.getCanvasMatrix().invert(parentInsertMatrix);
         float[] src = {x, y};
         if (parentInsertMatrix == null) {
             return src;

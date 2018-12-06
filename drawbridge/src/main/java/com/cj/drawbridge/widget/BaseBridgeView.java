@@ -76,7 +76,14 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
         int viewHeight = getHeight();
 
         int save = canvas.save();
-        canvas.setMatrix(canvasMatrix);
+//        canvas.setMatrix(canvasMatrix);
+        canvas.translate(xOffset, yOffset);
+        boolean scaleInProgress = scaleGesture.isInProgress();
+        if (scaleInProgress) {
+            canvas.scale(scale, scale, scaleGesture.getFocusX(), scaleGesture.getFocusY());
+        } else {
+            canvas.scale(scale, scale, preScaleFocusX, preScaleFocusY);
+        }
         drawBackgroundComponent(canvas);
         actionComponent.draw(canvas);
 
@@ -142,7 +149,7 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
 
     public void drawText(String text) {
         DrawTextComponent textComponent = new DrawTextComponent(this, text,
-                spToPx(22));
+                spToPx(28));
         textComponent.setOnCloseTextComponentListener(() -> {
             textList.remove(textComponent);
             invalidate();
@@ -188,6 +195,10 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
         yOffset += dy;
         changeCanvasMatrix();
         invalidate();
+    }
+
+    public Matrix getCanvasMatrix() {
+        return canvasMatrix;
     }
 
     private void changeCanvasMatrix() {
