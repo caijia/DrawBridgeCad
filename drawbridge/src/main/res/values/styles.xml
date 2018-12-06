@@ -8,24 +8,23 @@
         <item name="android:windowIsFloating">true</item>         <!--是否浮现在activity之上-->
         <item name="android:windowIsTranslucent">true</item>       <!--是否半透明-->
         <item name="android:windowContentOverlay">@null</item>      <!--是否有遮盖-->
-        <item name="android:windowAnimationStyle">@style/mystyle</item>
+        <item name="android:windowAnimationStyle">@style/DialogAnim</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:backgroundDimEnabled">true</item>        <!--背景是否模糊显示-->
     </style>
 
     <!--弹窗动画-->
-    <style name="mystyle" parent="android:Animation">
+    <style name="DialogAnim" parent="android:Animation">
         <!--//进入时的动画-->
-        <item name="@android:windowEnterAnimation">@anim/dialog_right_enter</item>
+        <item name="android:windowEnterAnimation">@anim/dialog_right_enter</item>
         <!--//退出时的动画-->
-        <item name="@android:windowExitAnimation">@anim/dialog_right_exit</item>
+        <item name="android:windowExitAnimation">@anim/dialog_right_exit</item>
     </style>
 
     <style name="EditBridgeTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/black</item>
         <item name="colorPrimaryDark">@color/black</item>
-        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
 </resources>
