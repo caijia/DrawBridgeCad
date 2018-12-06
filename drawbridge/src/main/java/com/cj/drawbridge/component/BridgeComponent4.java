@@ -114,7 +114,7 @@ public class BridgeComponent4 extends BaseBridgeComponent {
                 pathMeasure.getPosTan(k * percentPathLength, pos, tan);
                 canvas.drawLine(pos[0], rectStartY, pos[0], pos[1], paint);
 
-                hUnit = direction + right + "-" + left + "-";
+                hUnit = direction + left + "-" + right + "-";
                 if (k != hCount) {
                     String text = hUnit + k + "#";
                     drawText(canvas, Paint.Align.LEFT, text, pos[0],
@@ -127,7 +127,7 @@ public class BridgeComponent4 extends BaseBridgeComponent {
                         (2 * hCount + 1 - (k - hCount - 1)) * percentPathLength, pos, tan);
                 canvas.drawLine(pos[0], rectStartY, pos[0], pos[1], paint);
 
-                hUnit = direction + right + "-" + right + "-";
+                hUnit = direction + left + "-" + left + "-";
                 String text = hUnit + (int) (k - hCount - 1) + "#";
                 drawText(canvas, Paint.Align.LEFT, text,
                         pos[0] - percentWidth, pos[1] + textToScaleSize,

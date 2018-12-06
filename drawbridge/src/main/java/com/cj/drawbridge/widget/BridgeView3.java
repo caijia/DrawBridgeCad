@@ -46,6 +46,7 @@ public class BridgeView3 extends BaseBridgeView {
     @Override
     public void applyBridgeParams(BridgeParams params) {
         this.params = params;
+        invalidate();
     }
 
     @Override
