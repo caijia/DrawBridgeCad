@@ -116,7 +116,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        tools:visibility="visible">
+        tools:visibility="gone">
 
         <RadioButton
             android:id="@+id/tv_cancel"
@@ -162,4 +162,13 @@
             android:textCursorDrawable="@drawable/shape_cursor"
             android:textSize="18sp" />
     </RelativeLayout>
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:button="@null"
+        android:drawableLeft="@drawable/icon_nav_back_white"
+        android:onClick="back"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp" />
 </FrameLayout>

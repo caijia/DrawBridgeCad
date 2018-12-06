@@ -1,19 +1,18 @@
 package com.cj.drawbridge.dialog;
 
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.cj.drawbridge.EditBridgeActivity;
 import com.cj.drawbridge.R;
 import com.cj.drawbridge.helper.GlideImageLoader;
 import com.cj.drawbridge.helper.GridSpacingItemDecoration;
@@ -49,18 +48,7 @@ public class BridgePictureListDialog extends BottomSheetDialogFragment {
         return view;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        recyclerView = view.findViewById(R.id.recycler_view);
-
-        List<BridgeImage> bridgeImageList = getData();
-        BridgeImageAdapter adapter = new BridgeImageAdapter(bridgeImageList);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), SPAN_COUNT));
-        int space = (int) Util.dpToPx(getContext(), 12);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(space, true,
-                Color.TRANSPARENT));
-        recyclerView.setAdapter(adapter);
-    }
+    private OnClickBridgeListener onClickBridgeListener;
 
     private List<BridgeImage> getData() {
         List<BridgeImage> list = new ArrayList<>();
@@ -85,6 +73,28 @@ public class BridgePictureListDialog extends BottomSheetDialogFragment {
         }
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        recyclerView = view.findViewById(R.id.recycler_view);
+
+        List<BridgeImage> bridgeImageList = getData();
+        BridgeImageAdapter adapter = new BridgeImageAdapter(bridgeImageList);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), SPAN_COUNT));
+        int space = (int) Util.dpToPx(getContext(), 1);
+        int color = ContextCompat.getColor(getContext(), R.color.color_90333333);
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(space, false,
+                color));
+        recyclerView.setAdapter(adapter);
+    }
+
+    public void setOnClickBridgeListener(OnClickBridgeListener onClickBridgeListener) {
+        this.onClickBridgeListener = onClickBridgeListener;
+    }
+
+    public interface OnClickBridgeListener {
+        void onClickBridge(int type);
+    }
+
     class BridgeImageAdapter extends RecyclerView.Adapter<BridgeImageAdapter.BridgeImageVH> {
 
         private List<BridgeImage> bridgeImages;
@@ -104,7 +114,7 @@ public class BridgePictureListDialog extends BottomSheetDialogFragment {
 
         @Override
         public void onBindViewHolder(@NonNull BridgeImageVH holder, int position) {
-            ViewGroup.LayoutParams params = holder.ivBridge.getLayoutParams();
+            ViewGroup.LayoutParams params = holder.flImageContainer.getLayoutParams();
             params.width = params.height = Util.getScreenWidth(getContext()) / SPAN_COUNT;
 
             BridgeImage bridgeImage = bridgeImages.get(position);
@@ -112,7 +122,7 @@ public class BridgePictureListDialog extends BottomSheetDialogFragment {
                     R.drawable.shape_black);
 
             holder.setExtra(bridgeImage);
-            holder.itemView.setOnClickListener(holder);
+            holder.vClick.setOnClickListener(holder);
         }
 
         @Override
@@ -123,17 +133,22 @@ public class BridgePictureListDialog extends BottomSheetDialogFragment {
         class BridgeImageVH extends RecyclerView.ViewHolder implements View.OnClickListener {
             private ImageView ivBridge;
             private BridgeImage bridgeImage;
+            private FrameLayout flImageContainer;
+            private View vClick;
 
             public BridgeImageVH(@NonNull View itemView) {
                 super(itemView);
                 ivBridge = itemView.findViewById(R.id.iv_bridge);
+                flImageContainer = itemView.findViewById(R.id.fl_image_container);
+                vClick = itemView.findViewById(R.id.v_click);
             }
 
             @Override
             public void onClick(View v) {
                 int type = bridgeImage.type;
-                Intent i = EditBridgeActivity.getIntent(v.getContext(), type);
-                startActivity(i);
+                if (onClickBridgeListener != null) {
+                    onClickBridgeListener.onClickBridge(type);
+                }
             }
 
             public void setExtra(BridgeImage bridgeImage) {

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -41,15 +40,18 @@ import com.cj.drawbridge.widget.BridgeView9;
 public class EditBridgeActivity extends AppCompatActivity {
 
     private static final String EXTRA_BRIDGE_TYPE = "extra:bridgeType";
+    private static final String EXTRA_SAVE_FILE_PATH = "extra:saveFilePath";
     private BaseBridgeView bridgeView;
     private EditText etText;
     private RelativeLayout rlEditText;
     private FrameLayout flBridgeViewContainer;
     private RadioButton rbMove;
     private int bridgeType;
+    private String saveFilePath;
 
-    public static Intent getIntent(Context context, int bridgeType) {
+    public static Intent getIntent(Context context, String saveFilePath, int bridgeType) {
         Intent i = new Intent(context, EditBridgeActivity.class);
+        i.putExtra(EXTRA_SAVE_FILE_PATH, saveFilePath);
         i.putExtra(EXTRA_BRIDGE_TYPE, bridgeType);
         return i;
     }
@@ -60,6 +62,7 @@ public class EditBridgeActivity extends AppCompatActivity {
         }
 
         Bundle extras = intent.getExtras();
+        saveFilePath = extras.getString(EXTRA_SAVE_FILE_PATH);
         bridgeType = extras.getInt(EXTRA_BRIDGE_TYPE);
     }
 
@@ -188,8 +191,12 @@ public class EditBridgeActivity extends AppCompatActivity {
 
     public void save(View view) {
         Bitmap bitmap = bridgeView.createBitmap();
-        Util.saveBitmap(bitmap, Environment.getExternalStorageDirectory().getAbsolutePath()
-                + "/caijia.jpg");
+        Util.saveBitmap(bitmap, saveFilePath);
+        if (bitmap != null && !bitmap.isRecycled()) {
+            bitmap.recycle();
+        }
+        setResult(RESULT_OK);
+        finish();
     }
 
     public void cancelEditText(View view) {
@@ -211,5 +218,9 @@ public class EditBridgeActivity extends AppCompatActivity {
         BridgeParamsDialog dialog = BridgeParamsDialog.getInstance(bridgeView.getBridgeParams());
         dialog.setOnChangeBridgeParamsListener(params -> bridgeView.applyBridgeParams(params));
         dialog.show(getSupportFragmentManager(), "edit");
+    }
+
+    public void back(View view) {
+        onBackPressed();
     }
 }

@@ -12,6 +12,9 @@
     <color name="color_ff0000">#ff0000</color>
     <color name="transparent">#00000000</color>
     <color name="color_7bff0000">#7bff0000</color>
+    <color name="color_44ff0000">#44ff0000</color>
     <color name="color_90333333">#90333333</color>
+    <color name="color_cc000000">#cc000000</color>
+    <color name="color_50000000">#50000000</color>
     <color name="black">#000000</color>
 </resources>

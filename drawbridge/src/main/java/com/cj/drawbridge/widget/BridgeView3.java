@@ -32,13 +32,15 @@ public class BridgeView3 extends BaseBridgeView {
         params.setLength(12.2f);
         params.setDunShu(7);
         params.setZuoDun(34);
+        params.setYouDun(34);
         params.setDirection(Constants.BRIDGE_L);
     }
 
     @Override
     public void drawBackgroundComponent(Canvas canvas) {
         bridgeComponent3.draw(canvas, getWidth(), getHeight(), params.getLength(),
-                params.getDunShu(), params.getDirection(), params.getZuoDun(), params.getUnit());
+                params.getDunShu(), params.getDirection(), params.getZuoDun(),
+                params.getYouDun(), params.getUnit());
     }
 
     @Override

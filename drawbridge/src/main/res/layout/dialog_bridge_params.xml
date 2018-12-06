@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/color_90333333">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:orientation="vertical">
@@ -22,7 +22,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="12dp"
                 android:text="长度"
-                android:textColor="@color/color_333333"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
             <com.cj.drawbridge.widget.ClearEditText
@@ -35,7 +35,7 @@
                 android:hint="请输入"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="numberDecimal"
-                android:textColor="@color/color_333333"
+                android:textColor="@color/white"
                 android:textColorHint="@color/color_hint"
                 android:textSize="14sp" />
 
@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/color_efefef" />
+                android:background="@color/color_50000000" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -57,7 +57,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="12dp"
                 android:text="宽度"
-                android:textColor="@color/color_333333"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
             <com.cj.drawbridge.widget.ClearEditText
@@ -70,7 +70,7 @@
                 android:hint="请输入"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="numberDecimal"
-                android:textColor="@color/color_333333"
+                android:textColor="@color/white"
                 android:textColorHint="@color/color_hint"
                 android:textSize="14sp" />
 
@@ -78,7 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/color_efefef" />
+                android:background="@color/color_50000000" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -92,7 +92,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="12dp"
                 android:text="底板"
-                android:textColor="@color/color_333333"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
             <com.cj.drawbridge.widget.ClearEditText
@@ -105,7 +105,7 @@
                 android:hint="请输入"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="numberDecimal"
-                android:textColor="@color/color_333333"
+                android:textColor="@color/white"
                 android:textColorHint="@color/color_hint"
                 android:textSize="14sp" />
 
@@ -113,7 +113,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/color_efefef" />
+                android:background="@color/color_50000000" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -127,7 +127,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="12dp"
                 android:text="腹板"
-                android:textColor="@color/color_333333"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
             <com.cj.drawbridge.widget.ClearEditText
@@ -140,7 +140,7 @@
                 android:hint="请输入"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="numberDecimal"
-                android:textColor="@color/color_333333"
+                android:textColor="@color/white"
                 android:textColorHint="@color/color_hint"
 
                 android:textSize="14sp" />
@@ -149,7 +149,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/color_efefef" />
+                android:background="@color/color_50000000" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -163,7 +163,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="12dp"
                 android:text="翼缘板"
-                android:textColor="@color/color_333333"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
             <com.cj.drawbridge.widget.ClearEditText
@@ -176,7 +176,7 @@
                 android:hint="请输入"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="numberDecimal"
-                android:textColor="@color/color_333333"
+                android:textColor="@color/white"
                 android:textColorHint="@color/color_hint"
                 android:textSize="14sp" />
 
@@ -184,7 +184,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/color_efefef" />
+                android:background="@color/color_50000000" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -197,8 +197,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="12dp"
-                android:text="左墩"
-                android:textColor="@color/color_333333"
+                android:text="大桩号墩"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
             <com.cj.drawbridge.widget.ClearEditText
@@ -211,7 +211,7 @@
                 android:hint="请输入"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="number"
-                android:textColor="@color/color_333333"
+                android:textColor="@color/white"
                 android:textColorHint="@color/color_hint"
 
                 android:textSize="14sp" />
@@ -220,7 +220,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/color_efefef" />
+                android:background="@color/color_50000000" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -233,8 +233,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="12dp"
-                android:text="右墩"
-                android:textColor="@color/color_333333"
+                android:text="小桩号墩"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
             <com.cj.drawbridge.widget.ClearEditText
@@ -247,7 +247,7 @@
                 android:hint="请输入"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="number"
-                android:textColor="@color/color_333333"
+                android:textColor="@color/white"
                 android:textColorHint="@color/color_hint"
 
                 android:textSize="14sp" />
@@ -256,7 +256,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/color_efefef" />
+                android:background="@color/color_50000000" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -269,8 +269,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="12dp"
-                android:text="墩数"
-                android:textColor="@color/color_333333"
+                android:text="梁数"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
             <com.cj.drawbridge.widget.ClearEditText
@@ -283,7 +283,7 @@
                 android:hint="请输入"
                 android:imeOptions="flagNoExtractUi"
                 android:inputType="number"
-                android:textColor="@color/color_333333"
+                android:textColor="@color/white"
                 android:textColorHint="@color/color_hint"
                 android:textSize="14sp" />
 
@@ -291,7 +291,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/color_efefef" />
+                android:background="@color/color_50000000" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -304,8 +304,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="12dp"
-                android:text="方向"
-                android:textColor="@color/color_333333"
+                android:text="幅"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
             <RadioGroup
@@ -345,7 +345,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/color_efefef" />
+                android:background="@color/color_50000000" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -359,7 +359,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="12dp"
                 android:text="单位"
-                android:textColor="@color/color_333333"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
             <RadioGroup
@@ -399,7 +399,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/color_efefef" />
+                android:background="@color/color_50000000" />
         </RelativeLayout>
 
         <TextView
