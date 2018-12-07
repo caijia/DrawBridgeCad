@@ -245,6 +245,10 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         restorePaintParams(paint);
     }
 
+    public void setShowTextDecoration(boolean showTextDecoration) {
+        this.showTextDecoration = showTextDecoration;
+    }
+
     private float[] mapPointByTextScale(float x, float y) {
         matrix.reset();
         float[] src = {x, y};

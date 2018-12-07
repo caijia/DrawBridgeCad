@@ -41,7 +41,8 @@ public class BridgeComponent9 extends BaseBridgeComponent {
     }
 
     public void draw(Canvas canvas, int viewWidth, int viewHeight, float width,
-                     float yibanHeight, float fubanHeight, float dibanHeight, String unit) {
+                     float yibanHeight, float fubanHeight, float dibanHeight, String unit,
+                     Paint paint) {
         this.yibanHeight = yibanHeight;
         this.fubanHeight = fubanHeight;
         this.dibanHeight = dibanHeight;
@@ -88,7 +89,7 @@ public class BridgeComponent9 extends BaseBridgeComponent {
             String text = removeZero(i * wStep + "") + unit;
             drawText(canvas, Paint.Align.CENTER, text, x,
                     rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
-                    false);
+                    false, paint);
         }
 
         //竖刻度
@@ -110,7 +111,7 @@ public class BridgeComponent9 extends BaseBridgeComponent {
 
             if (i == 2 || i == 3) {
                 Path path = i == 2 ? downPath : upPath;
-                savePaintParams();
+                savePaintParams(paint);
                 paint.setStyle(Paint.Style.STROKE);
                 path.reset();
                 path.moveTo(rectStartX, rectStartY + totalHeight);
@@ -120,7 +121,7 @@ public class BridgeComponent9 extends BaseBridgeComponent {
                         rectEndX,
                         rectStartY + totalHeight);
                 canvas.drawPath(path, paint);
-                restorePaintParams();
+                restorePaintParams(paint);
 
             } else {
                 canvas.drawLine(
@@ -136,18 +137,18 @@ public class BridgeComponent9 extends BaseBridgeComponent {
                 drawText(canvas, Paint.Align.LEFT, text,
                         rectEndX + rectToScaleSize + scaleSize + textToScaleSize,
                         rectStartY + totalHeight + heights[i] / 2 * hScale,
-                        true);
+                        true, paint);
 
                 drawText(canvas, Paint.Align.RIGHT, names[i], rectStartX - rectToScaleSize,
                         rectStartY + totalHeight + heights[i] / 2 * hScale,
-                        true);
+                        true, paint);
             }
         }
 
-        savePaintParams();
+        savePaintParams(paint);
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawRect(rectStartX, rectStartY, rectEndX, rectEndY, paint);
-        restorePaintParams();
+        restorePaintParams(paint);
     }
 
     private float getTotalHeight(int index) {

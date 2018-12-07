@@ -36,7 +36,8 @@ public class BridgeComponent15 extends BaseBridgeComponent {
         wScale = minScale;
     }
 
-    public void draw(Canvas canvas, int viewWidth, int viewHeight, float height, String unit) {
+    public void draw(Canvas canvas, int viewWidth, int viewHeight, float height, String unit,
+                     Paint paint) {
         computeScaleAndStep(viewHeight, height);
 
         float mapWidth = wScale * (widths.length - 1) + 2 * radius + rectToRadiusSpace + radiusToArrowLine;
@@ -52,10 +53,11 @@ public class BridgeComponent15 extends BaseBridgeComponent {
         float textCenterY = viewHeight / 2;
         float textCenterX = startX - arrowX - rectToScaleSize;
         canvas.rotate(90, textCenterX, textCenterY);
-        drawText(canvas, Paint.Align.CENTER, TEXT, textCenterX, textCenterY, true);
+        drawText(canvas, Paint.Align.CENTER, TEXT, textCenterX, textCenterY,
+                true, paint);
         canvas.restoreToCount(save);
 
-        savePaintParams();
+        savePaintParams(paint);
         paint.setStyle(Paint.Style.STROKE);
         arrowPath.reset();
         arrowPath.moveTo(startX, textCenterY - arrowHeight / 2);
@@ -74,24 +76,24 @@ public class BridgeComponent15 extends BaseBridgeComponent {
         canvas.drawRect(rectStartX, startY, rectStartX + rectWidth,
                 startY + mapHeight, paint);
 
-        restorePaintParams();
+        restorePaintParams(paint);
 
         //圆上的文字
         drawText(canvas, Paint.Align.RIGHT, "270'",
                 startX + radiusToArrowLine - rectToScaleSize,
-                textCenterY, true);
+                textCenterY, true, paint);
 
         drawText(canvas, Paint.Align.LEFT, "90'",
                 startX + radiusToArrowLine + 2 * radius + rectToScaleSize,
-                textCenterY, true);
+                textCenterY, true, paint);
 
         drawText(canvas, Paint.Align.CENTER, "0'",
                 startX + radiusToArrowLine + radius,
-                textCenterY - radius - rectToScaleSize, false);
+                textCenterY - radius - rectToScaleSize, false, paint);
 
         drawText(canvas, Paint.Align.CENTER, "180'",
                 startX + radiusToArrowLine + radius,
-                textCenterY + radius + rectToScaleSize, 1f);
+                textCenterY + radius + rectToScaleSize, 1f, paint);
 
         //横刻度
         canvas.drawLine(rectStartX,
@@ -107,7 +109,7 @@ public class BridgeComponent15 extends BaseBridgeComponent {
 
             drawText(canvas, Paint.Align.CENTER, widths[i] + "'", x,
                     startY - rectToScaleSize - scaleSize - textToScaleSize,
-                    false);
+                    false, paint);
         }
 
         //竖刻度
@@ -130,7 +132,7 @@ public class BridgeComponent15 extends BaseBridgeComponent {
             String text = removeZero(i * hStep + "") + unit;
             drawText(canvas, Paint.Align.LEFT, text,
                     endX + rectToScaleSize + scaleSize + textToScaleSize,
-                    y, true);
+                    y, true, paint);
         }
     }
 

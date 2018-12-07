@@ -99,7 +99,7 @@ public class ClearEditText extends AppCompatEditText implements
     public void onFocusChange(View v, boolean hasFocus) {
         this.hasFoucs = hasFocus;
         if (hasFocus) {
-            setClearIconVisible(getText().length() > 0);
+            setClearIconVisible(getText() != null && getText().length() > 0);
         } else {
             setClearIconVisible(false);
         }

@@ -3,6 +3,7 @@ package com.cj.drawbridge;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -190,7 +191,7 @@ public class EditBridgeActivity extends AppCompatActivity {
     }
 
     public void save(View view) {
-        Bitmap bitmap = bridgeView.createBitmap();
+        Bitmap bitmap = bridgeView.createBitmap(Color.WHITE, Color.BLACK);
         Util.saveBitmap(bitmap, saveFilePath);
         if (bitmap != null && !bitmap.isRecycled()) {
             bitmap.recycle();

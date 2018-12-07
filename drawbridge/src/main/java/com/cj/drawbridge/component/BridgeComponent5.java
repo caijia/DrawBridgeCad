@@ -35,7 +35,7 @@ public class BridgeComponent5 extends BaseBridgeComponent {
     }
 
     public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, int height,
-                     String direction, int dun, String wUnit) {
+                     String direction, int dun, String wUnit, Paint paint) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
         //宽度
         float mapWidth = wCount * wScale * wStep;
@@ -74,14 +74,14 @@ public class BridgeComponent5 extends BaseBridgeComponent {
             drawText(canvas, Paint.Align.CENTER, text,
                     rectStartX + i * wScale * wStep,
                     rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
-                    false);
+                    false, paint);
         }
 
         //矩形
-        savePaintParams();
+        savePaintParams(paint);
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawRect(rectStartX, rectStartY, rectEndX, rectEndY, paint);
-        restorePaintParams();
+        restorePaintParams(paint);
 
         float percentWidth = mapWidth / hCount;
         for (int k = 0; k < hCount; k++) {
@@ -97,7 +97,7 @@ public class BridgeComponent5 extends BaseBridgeComponent {
             drawText(canvas, Paint.Align.LEFT, text,
                     rectStartX + percentWidth * k,
                     rectEndY + textToScaleSize,
-                    1f);
+                    1f, paint);
         }
     }
 

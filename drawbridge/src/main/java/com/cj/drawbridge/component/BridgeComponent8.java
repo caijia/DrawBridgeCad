@@ -38,7 +38,8 @@ public class BridgeComponent8 extends BaseBridgeComponent {
     }
 
     public void draw(Canvas canvas, int viewWidth, int viewHeight, float width,
-                     float yibanHeight, float fubanHeight, float dibanHeight, String unit) {
+                     float yibanHeight, float fubanHeight, float dibanHeight, String unit,
+                     Paint paint) {
         this.yibanHeight = yibanHeight;
         this.fubanHeight = fubanHeight;
         this.dibanHeight = dibanHeight;
@@ -87,7 +88,7 @@ public class BridgeComponent8 extends BaseBridgeComponent {
             drawText(canvas, Paint.Align.CENTER, text,
                     rectStartX + i * wScale * wStep,
                     rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
-                    false);
+                    false, paint);
         }
 
         //竖刻度
@@ -119,18 +120,18 @@ public class BridgeComponent8 extends BaseBridgeComponent {
                 drawText(canvas, Paint.Align.LEFT, text,
                         rectEndX + rectToScaleSize + scaleSize + textToScaleSize,
                         rectStartY + totalHeight + heights[i] / 2 * hScale,
-                        true);
+                        true, paint);
 
                 drawText(canvas, Paint.Align.RIGHT, names[i], rectStartX - rectToScaleSize,
                         rectStartY + totalHeight + heights[i] / 2 * hScale,
-                        true);
+                        true, paint);
             }
         }
 
-        savePaintParams();
+        savePaintParams(paint);
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawRect(rectStartX, rectStartY, rectEndX, rectEndY, paint);
-        restorePaintParams();
+        restorePaintParams(paint);
     }
 
     private float getTotalHeight(int index) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/color_90333333">
@@ -407,10 +407,10 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_margin="12dp"
-            android:background="@drawable/shape_e3e3e3_ff0000_r4"
+            android:background="@drawable/selector_solid_transparent_stroke_ff0000_r4"
             android:gravity="center"
             android:text="应用"
             android:textColor="@color/white"
             android:textSize="14sp" />
     </LinearLayout>
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

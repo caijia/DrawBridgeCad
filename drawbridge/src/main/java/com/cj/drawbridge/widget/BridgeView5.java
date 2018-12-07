@@ -2,6 +2,7 @@ package com.cj.drawbridge.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 
@@ -36,9 +37,10 @@ public class BridgeView5 extends BaseBridgeView {
     }
 
     @Override
-    public void drawBackgroundComponent(Canvas canvas) {
+    public void drawBackgroundComponent(Canvas canvas, Paint paint) {
         bridgeComponent5.draw(canvas, getWidth(), getHeight(), params.getLength(),
-                params.getDunShu(), params.getDirection(), params.getZuoDun(), params.getUnit());
+                params.getDunShu(), params.getDirection(), params.getZuoDun(), params.getUnit(),
+                paint);
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.cj.drawbridge.component;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.TypedValue;
@@ -13,10 +12,6 @@ import android.util.TypedValue;
 public abstract class BaseBridgeComponent {
 
     private static final int MIN_SCALE = 40;
-    protected Paint paint;
-    /**
-     * 刻度尺高度
-     */
     protected int scaleSize;
     /**
      * 矩形到刻度之间的间隔
@@ -40,11 +35,6 @@ public abstract class BaseBridgeComponent {
 
     public BaseBridgeComponent(Context context) {
         this.context = context;
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setAntiAlias(true);
-        paint.setColor(Color.WHITE);
-        paint.setStrokeWidth(dpToPx(1));
-
         margin = (int) dpToPx(60);
         scaleSize = (int) dpToPx(4);
         rectToScaleSize = (int) dpToPx(8);
@@ -53,7 +43,7 @@ public abstract class BaseBridgeComponent {
         hScale = wScale = minScale;
     }
 
-    public void restorePaintParams() {
+    public void restorePaintParams(Paint paint) {
         paint.setColor(paintParams.color);
         paint.setStrokeWidth(paintParams.strokeWidth);
         paint.setTextSize(paintParams.textSize);
@@ -61,7 +51,7 @@ public abstract class BaseBridgeComponent {
         paint.setTextAlign(paintParams.textAlign);
     }
 
-    public void savePaintParams() {
+    public void savePaintParams(Paint paint) {
         paintParams.color = paint.getColor();
         paintParams.strokeWidth = paint.getStrokeWidth();
         paintParams.textSize = paint.getTextSize();
@@ -93,13 +83,13 @@ public abstract class BaseBridgeComponent {
     }
 
     public void drawText(Canvas canvas, Paint.Align align, String text, float x, float y,
-                         boolean addSelfHalfHeight) {
-        drawText(canvas, align, text, x, y, addSelfHalfHeight ? 0.5f : 0);
+                         boolean addSelfHalfHeight, Paint paint) {
+        drawText(canvas, align, text, x, y, addSelfHalfHeight ? 0.5f : 0, paint);
     }
 
     public void drawText(Canvas canvas, Paint.Align align, String text, float x, float y,
-                         float selfHeightPercent) {
-        savePaintParams();
+                         float selfHeightPercent, Paint paint) {
+        savePaintParams(paint);
         paint.setTextSize(spToPx(10));
         paint.setStrokeWidth(0);
         paint.setTextAlign(align);
@@ -109,7 +99,7 @@ public abstract class BaseBridgeComponent {
                 x,
                 y + nameHalfHeight,
                 paint);
-        restorePaintParams();
+        restorePaintParams(paint);
     }
 
     public abstract float[] getBounds();

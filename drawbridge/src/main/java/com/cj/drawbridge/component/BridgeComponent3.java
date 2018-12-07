@@ -44,7 +44,7 @@ public class BridgeComponent3 extends BaseBridgeComponent {
     }
 
     public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, int dunShu,
-                     String direction, int zuoDun, int youDun, String wUnit) {
+                     String direction, int zuoDun, int youDun, String wUnit, Paint paint) {
         computeScaleAndStep(viewWidth, viewHeight, width, dunShu);
         //宽度
         float mapWidth = wCount * wScale * wStep;
@@ -80,14 +80,14 @@ public class BridgeComponent3 extends BaseBridgeComponent {
             drawText(canvas, Paint.Align.CENTER, text,
                     rectStartX + i * wScale * wStep,
                     rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
-                    false);
+                    false, paint);
         }
 
         //横线
         canvas.drawLine(rectStartX, rectStartY, rectEndX, rectStartY, paint);
 
         //圆弧 从第二个 - 倒数第二个 画弧
-        savePaintParams();
+        savePaintParams(paint);
         paint.setStyle(Paint.Style.STROKE);
         float percentWidth = mapWidth / (hCount + 1);
         arcPath.reset();
@@ -102,7 +102,7 @@ public class BridgeComponent3 extends BaseBridgeComponent {
         canvas.drawPath(arcPath, paint);
 
         pathMeasure.setPath(arcPath, false);
-        restorePaintParams();
+        restorePaintParams(paint);
 
         float pathLength = pathMeasure.getLength();
         float percentPathLength = pathLength / (hCount + 1); //8等分
@@ -116,7 +116,7 @@ public class BridgeComponent3 extends BaseBridgeComponent {
                 drawText(canvas, Paint.Align.LEFT, text,
                         pos[0] - percentWidth,
                         pos[1] + textToScaleSize,
-                        1f);
+                        1f, paint);
             }
         }
     }

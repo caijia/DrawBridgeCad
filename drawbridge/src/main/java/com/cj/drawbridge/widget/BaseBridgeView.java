@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -19,6 +21,8 @@ import com.cj.drawbridge.helper.MoveGestureDetector;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import static android.graphics.PorterDuff.Mode.SRC;
 
 /**
  * 桥涵的底图
@@ -38,6 +42,7 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
     private Matrix canvasMatrix = new Matrix();
     private float preScaleFocusX;
     private float preScaleFocusY;
+    private Paint paint;
 
     public BaseBridgeView(Context context) {
         this(context, null);
@@ -66,6 +71,11 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
         actionComponent = new ActionComponent(this);
         gestureDetector = new MoveGestureDetector(context, this);
         scaleGesture = new ScaleGestureDetector(context, this);
+
+        paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setColor(Color.WHITE);
+        paint.setStrokeWidth(dpToPx(1));
     }
 
     @Override
@@ -76,7 +86,6 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
         int viewHeight = getHeight();
 
         int save = canvas.save();
-//        canvas.setMatrix(canvasMatrix);
         canvas.translate(xOffset, yOffset);
         boolean scaleInProgress = scaleGesture.isInProgress();
         if (scaleInProgress) {
@@ -84,7 +93,7 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
         } else {
             canvas.scale(scale, scale, preScaleFocusX, preScaleFocusY);
         }
-        drawBackgroundComponent(canvas);
+        drawBackgroundComponent(canvas, paint);
         actionComponent.draw(canvas);
 
         for (DrawTextComponent textComponent : textList) {
@@ -93,7 +102,7 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
         canvas.restoreToCount(save);
     }
 
-    public abstract void drawBackgroundComponent(Canvas canvas);
+    public abstract void drawBackgroundComponent(Canvas canvas, Paint paint);
 
     public abstract void applyBridgeParams(BridgeParams params);
 
@@ -103,19 +112,30 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
 
     public abstract float getMapHeight();
 
-    public Bitmap createBitmap() {
+    public Bitmap createBitmap(int background, int drawColor) {
         int mapWidth = (int) getMapWidth();
         int mapHeight = (int) getMapHeight();
         int viewWidth = getWidth();
         int viewHeight = getHeight();
 
-        Bitmap bitmap = Bitmap.createBitmap(mapWidth, mapHeight, Bitmap.Config.RGB_565);
+        Bitmap bitmap = Bitmap.createBitmap(mapWidth, mapHeight, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setColor(drawColor);
+        paint.setStrokeWidth(dpToPx(1));
+
+        int saveLayer = canvas.saveLayer(0, 0, mapWidth, mapHeight, null, Canvas.ALL_SAVE_FLAG);
+        canvas.drawColor(background, SRC);
+        canvas.restoreToCount(saveLayer);
+
         int save = canvas.save();
         canvas.translate((mapWidth - viewWidth) / 2, (mapHeight - viewHeight) / 2);
-        drawBackgroundComponent(canvas);
+
+        drawBackgroundComponent(canvas, paint);
         actionComponent.draw(canvas);
         for (DrawTextComponent textComponent : textList) {
+            textComponent.setShowTextDecoration(false);
             textComponent.drawText(canvas, viewWidth / 2, viewHeight / 2);
         }
         canvas.restoreToCount(save);

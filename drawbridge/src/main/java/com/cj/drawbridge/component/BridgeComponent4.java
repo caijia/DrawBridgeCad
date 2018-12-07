@@ -44,7 +44,7 @@ public class BridgeComponent4 extends BaseBridgeComponent {
     }
 
     public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, int height,
-                     String direction, int left, int right, String wUnit) {
+                     String direction, int left, int right, String wUnit, Paint paint) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
         //宽度
         float mapWidth = wCount * wScale * wStep;
@@ -82,14 +82,14 @@ public class BridgeComponent4 extends BaseBridgeComponent {
             String text = removeZero(i * wStep + "") + wUnit;
             drawText(canvas, Paint.Align.CENTER, text, rectStartX + i * wScale * wStep,
                     rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
-                    false);
+                    false, paint);
         }
 
         //横线
         canvas.drawLine(rectStartX, rectStartY, rectEndX, rectStartY, paint);
 
         //画弧
-        savePaintParams();
+        savePaintParams(paint);
         paint.setStyle(Paint.Style.STROKE);
         float percentWidth = mapWidth / (2 * hCount + 1);
         arcPath.reset();
@@ -104,7 +104,7 @@ public class BridgeComponent4 extends BaseBridgeComponent {
         canvas.drawPath(arcPath, paint);
 
         pathMeasure.setPath(arcPath, false);
-        restorePaintParams();
+        restorePaintParams(paint);
 
         float pathLength = pathMeasure.getLength();
         float percentPathLength = pathLength / (2 * hCount + 1); // 8 -> 17
@@ -119,7 +119,7 @@ public class BridgeComponent4 extends BaseBridgeComponent {
                     String text = hUnit + k + "#";
                     drawText(canvas, Paint.Align.LEFT, text, pos[0],
                             pos[1] + textToScaleSize,
-                            1f);
+                            1f, paint);
                 }
 
             } else {
@@ -131,7 +131,7 @@ public class BridgeComponent4 extends BaseBridgeComponent {
                 String text = hUnit + (int) (k - hCount - 1) + "#";
                 drawText(canvas, Paint.Align.LEFT, text,
                         pos[0] - percentWidth, pos[1] + textToScaleSize,
-                        1f);
+                        1f, paint);
             }
         }
     }

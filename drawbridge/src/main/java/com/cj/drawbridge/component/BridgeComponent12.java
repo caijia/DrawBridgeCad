@@ -46,7 +46,7 @@ public class BridgeComponent12 extends BaseBridgeComponent {
     }
 
     public void draw(Canvas canvas, int viewWidth, int viewHeight, int width, float height,
-                     String direction, int zuoDun, String unit) {
+                     String direction, int zuoDun, String unit, Paint paint) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
 
         //矩形宽度
@@ -68,12 +68,12 @@ public class BridgeComponent12 extends BaseBridgeComponent {
             float incrementWidth = i * wScale * wStep;
             drawText(canvas, Paint.Align.CENTER, text,
                     rectStartX + dWidth + incrementWidth + wScale * wStep / 2,
-                    rectStartY - rectToScaleSize, false);
+                    rectStartY - rectToScaleSize, false, paint);
 
             if (i < wCount - 1) {
                 drawText(canvas, Paint.Align.CENTER, text,
                         rectStartX + incrementWidth + wScale * wStep,
-                        rectEndY + rectToScaleSize, true);
+                        rectEndY + rectToScaleSize, true, paint);
             }
 
             canvas.drawLine(
@@ -114,10 +114,10 @@ public class BridgeComponent12 extends BaseBridgeComponent {
             String text = removeZero(i * hStep + "") + unit;
             drawText(canvas, Paint.Align.LEFT, text,
                     rectEndX + rectToScaleSize + scaleSize + textToScaleSize - curOffsetX,
-                    rectStartY + curHeight, true);
+                    rectStartY + curHeight, true, paint);
         }
 
-        savePaintParams();
+        savePaintParams(paint);
         paint.setStyle(Paint.Style.STROKE);
         path.reset();
         path.moveTo(rectStartX + dWidth, rectStartY);
@@ -126,15 +126,15 @@ public class BridgeComponent12 extends BaseBridgeComponent {
         path.rLineTo(dWidth, -mapHeight);
         path.close();
         canvas.drawPath(path, paint);
-        restorePaintParams();
+        restorePaintParams(paint);
 
         drawText(canvas, Paint.Align.CENTER, TEXT_KXB_CODE,
                 rectStartX + dWidth + (mapWidth - dWidth) / 2,
-                rectStartY - dpToPx(20), false);
+                rectStartY - dpToPx(20), false, paint);
 
         drawText(canvas, Paint.Align.CENTER, TEXT_JF_CODE,
                 rectStartX + (mapWidth - dWidth) / 2,
-                rectEndY + dpToPx(20), true);
+                rectEndY + dpToPx(20), true, paint);
     }
 
     @Override

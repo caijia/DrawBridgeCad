@@ -47,7 +47,7 @@ public class BridgeComponent1 extends BaseBridgeComponent {
     }
 
     public void draw(Canvas canvas, int viewWidth, int viewHeight, float width, float height,
-                     String unit) {
+                     String unit, Paint paint) {
         computeScaleAndStep(viewWidth, viewHeight, width, height);
 
         //矩形宽度
@@ -84,7 +84,8 @@ public class BridgeComponent1 extends BaseBridgeComponent {
             String text = removeZero(i * wStep + "") + unit;
             drawText(canvas, Paint.Align.CENTER, text,
                     rectStartX + incrementWidth + dWidth,
-                    rectStartY - rectToScaleSize - scaleSize - textToScaleSize, false);
+                    rectStartY - rectToScaleSize - scaleSize - textToScaleSize,
+                    false, paint);
         }
 
         //竖刻度
@@ -116,10 +117,10 @@ public class BridgeComponent1 extends BaseBridgeComponent {
             String text = removeZero(i * hStep + "") + unit;
             drawText(canvas, Paint.Align.LEFT, text,
                     rectEndX + rectToScaleSize + scaleSize + textToScaleSize - curOffsetX,
-                    rectStartY + curHeight, true);
+                    rectStartY + curHeight, true, paint);
         }
 
-        savePaintParams();
+        savePaintParams(paint);
         paint.setStyle(Paint.Style.STROKE);
         path.reset();
         path.moveTo(rectStartX + dWidth, rectStartY);
@@ -128,7 +129,7 @@ public class BridgeComponent1 extends BaseBridgeComponent {
         path.rLineTo(dWidth, -mapHeight);
         path.close();
         canvas.drawPath(path, paint);
-        restorePaintParams();
+        restorePaintParams(paint);
 
         canvas.drawLine(rectStartX, rectStartY + splitLineHeight,
                 rectEndX, rectStartY + splitLineHeight, paint);

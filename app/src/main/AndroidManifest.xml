@@ -14,13 +14,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.caijia.drawbridgecad.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <activity
-            android:name=".EditBridgeActivity"
-            android:screenOrientation="landscape">
-
-        </activity>
-
-        <activity android:name=".OtherActivity">
+            android:name=".OtherActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

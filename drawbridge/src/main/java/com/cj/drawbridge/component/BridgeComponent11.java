@@ -51,7 +51,8 @@ public class BridgeComponent11 extends BaseBridgeComponent {
     }
 
     public void draw(Canvas canvas, int viewWidth, int viewHeight, float width,
-                     float yibanHeight, float fubanHeight, float dibanHeight, String unit) {
+                     float yibanHeight, float fubanHeight, float dibanHeight, String unit,
+                     Paint paint) {
         this.yibanHeight = yibanHeight;
         this.fubanHeight = fubanHeight;
         this.dibanHeight = dibanHeight;
@@ -99,7 +100,7 @@ public class BridgeComponent11 extends BaseBridgeComponent {
             String text = removeZero(i * wStep + "") + unit;
             drawText(canvas, Paint.Align.CENTER, text,
                     x, rectStartY - scaleSize - rectToScaleSize - textToScaleSize,
-                    false);
+                    false, paint);
         }
 
         //竖刻度
@@ -136,17 +137,17 @@ public class BridgeComponent11 extends BaseBridgeComponent {
                 drawText(canvas, Paint.Align.LEFT, text,
                         rectEndX + rectToScaleSize + scaleSize + textToScaleSize,
                         rectStartY + totalHeight + heights[i] / 2 * hScale,
-                        true);
+                        true, paint);
 
                 float halfTanX = (float) ((totalHeight + heights[i] / 2 * hScale) / tanDegree);
                 drawText(canvas, Paint.Align.RIGHT, names[i],
                         rectStartX - rectToScaleSize + dWidth - halfTanX,
                         rectStartY + totalHeight + heights[i] / 2 * hScale,
-                        true);
+                        true, paint);
             }
         }
 
-        savePaintParams();
+        savePaintParams(paint);
         paint.setStyle(Paint.Style.STROKE);
         path.reset();
         path.moveTo(rectStartX + dWidth, rectStartY);
@@ -155,7 +156,7 @@ public class BridgeComponent11 extends BaseBridgeComponent {
         path.rLineTo(dWidth, -mapHeight);
         path.close();
         canvas.drawPath(path, paint);
-        restorePaintParams();
+        restorePaintParams(paint);
     }
 
     private float getTotalHeight(int index) {
