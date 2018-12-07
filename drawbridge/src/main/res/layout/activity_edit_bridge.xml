@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
     tools:context=".EditBridgeActivity">
 
     <FrameLayout
@@ -40,7 +39,7 @@
                 android:onClick="move"
                 android:padding="8dp"
                 android:text="移动"
-                android:textColor="@color/color_solid_1afa29_ffffff_r2"
+                android:textColor="@color/color_solid_1afa29_000000_r2"
                 android:textSize="14sp" />
 
             <RadioButton
@@ -97,7 +96,7 @@
             android:onClick="save"
             android:padding="8dp"
             android:text="保存"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="14sp" />
 
         <RadioButton
@@ -107,7 +106,7 @@
             android:onClick="edit"
             android:padding="8dp"
             android:text="修改"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -128,7 +127,7 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:text="取消"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="14sp" />
 
         <RadioButton
@@ -158,8 +157,7 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:textColor="@color/white"
-            android:textColorHint="@color/color_aaaaaa"
-            android:textCursorDrawable="@drawable/shape_cursor"
+            android:hint="请输入文字"
             android:textSize="18sp" />
     </RelativeLayout>
 
@@ -167,7 +165,7 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:button="@null"
-        android:drawableLeft="@drawable/icon_nav_back_white"
+        android:drawableLeft="@drawable/icon_nav_back"
         android:onClick="back"
         android:paddingLeft="12dp"
         android:paddingRight="12dp" />

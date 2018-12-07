@@ -81,7 +81,7 @@ public class BridgePictureListDialog extends BottomSheetDialogFragment {
         BridgeImageAdapter adapter = new BridgeImageAdapter(bridgeImageList);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), SPAN_COUNT));
         int space = (int) Util.dpToPx(getContext(), 1);
-        int color = ContextCompat.getColor(getContext(), R.color.color_90333333);
+        int color = ContextCompat.getColor(getContext(), R.color.color_efefef);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(space, false,
                 color));
         recyclerView.setAdapter(adapter);

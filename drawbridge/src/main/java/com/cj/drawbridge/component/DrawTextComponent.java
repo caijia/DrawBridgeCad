@@ -171,7 +171,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
                 centerY + bounds[1] / 2);
         textRect.inset(-radius, -radius);
         savePaintParams(paint);
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.GRAY);
         paint.setStyle(Paint.Style.STROKE);
         if (!showTextDecoration) {
             paint.setColor(Color.TRANSPARENT);

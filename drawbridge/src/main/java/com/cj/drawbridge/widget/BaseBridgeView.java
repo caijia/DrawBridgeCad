@@ -74,7 +74,7 @@ public abstract class BaseBridgeView extends View implements MoveGestureDetector
 
         paint = new Paint();
         paint.setAntiAlias(true);
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.BLACK);
         paint.setStrokeWidth(dpToPx(1));
     }
 
