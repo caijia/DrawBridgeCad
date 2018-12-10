@@ -31,7 +31,7 @@ public class BridgeView4 extends BaseBridgeView {
         bridgeComponent4 = new BridgeComponent4(context);
         params = new BridgeParams();
         params.setLength(12.1f);
-        params.setDunShu(6);
+        params.setDunShu(3);
         params.setZuoDun(36);
         params.setYouDun(35);
         params.setDirection(Constants.BRIDGE_L);

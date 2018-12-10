@@ -9,7 +9,7 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.cj.drawbridge.EditBridgeActivity;
@@ -32,14 +32,16 @@ public class OtherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_other);
         imageView = findViewById(R.id.image_view);
         saveFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/caijia.jpg";
+
+        Button btnEdit = findViewById(R.id.btn_edit);
+        btnEdit.setOnClickListener((v) -> editImage());
     }
 
-    public void editImage(View view) {
+    private void editImage() {
         BridgePictureListDialog dialog = new BridgePictureListDialog();
         dialog.setOnClickBridgeListener(type -> {
             File file = new File(saveFilePath);
             if (file.exists()) {
-                System.out.println(11);
                 file.delete();
             }
             Intent intent = EditBridgeActivity.getIntent(this, saveFilePath, type);

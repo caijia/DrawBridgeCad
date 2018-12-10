@@ -10,105 +10,113 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <LinearLayout
+    <HorizontalScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:orientation="horizontal"
-        android:visibility="visible">
+        android:scrollbars="none">
 
-        <RadioButton
+        <!--action button-->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:button="@null"
-            android:drawableLeft="@drawable/icon_draw_text"
-            android:gravity="center"
-            android:onClick="drawText"
-            android:padding="12dp" />
-
-        <RadioGroup
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="visible">
 
             <RadioButton
-                android:id="@+id/rb_move"
+                android:id="@+id/rb_draw_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:button="@null"
-                android:onClick="move"
+                android:drawableLeft="@drawable/icon_draw_text"
+                android:gravity="center"
+                android:padding="12dp" />
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rb_move"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@null"
+                    android:onClick="move"
+                    android:padding="8dp"
+                    android:text="移动"
+                    android:textColor="@color/color_solid_1afa29_000000_r2"
+                    android:textSize="14sp" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@null"
+                    android:drawableLeft="@drawable/selector_draw_qx"
+                    android:gravity="center"
+                    android:onClick="drawPath"
+                    android:padding="12dp" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@null"
+                    android:drawableLeft="@drawable/selector_draw_line"
+                    android:gravity="center"
+                    android:onClick="drawLine"
+                    android:padding="12dp" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@null"
+                    android:drawableLeft="@drawable/selector_draw_circle"
+                    android:gravity="center"
+                    android:onClick="drawCircle"
+                    android:padding="12dp" />
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@null"
+                    android:drawableLeft="@drawable/selector_draw_square"
+                    android:gravity="center"
+                    android:onClick="drawRect"
+                    android:padding="12dp" />
+
+            </RadioGroup>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@null"
+                android:drawableLeft="@drawable/icon_draw_cancel"
+                android:gravity="center"
+                android:onClick="cancelPrevious"
+                android:padding="12dp" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@null"
+                android:onClick="save"
                 android:padding="8dp"
-                android:text="移动"
-                android:textColor="@color/color_solid_1afa29_000000_r2"
+                android:text="保存"
+                android:textColor="@color/black"
                 android:textSize="14sp" />
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:button="@null"
-                android:drawableLeft="@drawable/selector_draw_qx"
-                android:gravity="center"
-                android:onClick="drawPath"
-                android:padding="12dp" />
+                android:onClick="edit"
+                android:padding="8dp"
+                android:text="修改"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+        </LinearLayout>
 
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:button="@null"
-                android:drawableLeft="@drawable/selector_draw_line"
-                android:gravity="center"
-                android:onClick="drawLine"
-                android:padding="12dp" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:button="@null"
-                android:drawableLeft="@drawable/selector_draw_circle"
-                android:gravity="center"
-                android:onClick="drawCircle"
-                android:padding="12dp" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:button="@null"
-                android:drawableLeft="@drawable/selector_draw_square"
-                android:gravity="center"
-                android:onClick="drawRect"
-                android:padding="12dp" />
-
-        </RadioGroup>
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:button="@null"
-            android:drawableLeft="@drawable/icon_draw_cancel"
-            android:gravity="center"
-            android:onClick="cancelPrevious"
-            android:padding="12dp" />
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:button="@null"
-            android:onClick="save"
-            android:padding="8dp"
-            android:text="保存"
-            android:textColor="@color/black"
-            android:textSize="14sp" />
-
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:button="@null"
-            android:onClick="edit"
-            android:padding="8dp"
-            android:text="修改"
-            android:textColor="@color/black"
-            android:textSize="14sp" />
-    </LinearLayout>
+    </HorizontalScrollView>
 
     <RelativeLayout
         android:id="@+id/rl_edit_text"
@@ -153,15 +161,16 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:gravity="top|left"
+            android:hint="请输入文字"
             android:imeOptions="flagNoExtractUi"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
-            android:textColor="@color/white"
-            android:hint="请输入文字"
+            android:textColor="@color/color_333333"
             android:textSize="18sp" />
     </RelativeLayout>
 
     <RadioButton
+        android:id="@+id/rb_nav_back"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:button="@null"

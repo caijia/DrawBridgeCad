@@ -146,6 +146,8 @@ public class EditBridgeActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams.MATCH_PARENT);
     }
 
+    private RadioButton rbNavBack;
+    private RadioButton rbDrawText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,12 +158,16 @@ public class EditBridgeActivity extends AppCompatActivity {
         etText = findViewById(R.id.et_text);
         rlEditText = findViewById(R.id.rl_edit_text);
         rbMove = findViewById(R.id.rb_move);
+        rbNavBack = findViewById(R.id.rb_nav_back);
+        rbDrawText = findViewById(R.id.rb_draw_text);
         rbMove.setChecked(true);
 
         dynamicAddBridgeView();
+        rbDrawText.setOnClickListener(v -> drawText());
     }
 
-    public void drawText(View view) {
+    public void drawText() {
+        rbNavBack.setVisibility(View.GONE);
         rlEditText.setVisibility(View.VISIBLE);
         Util.showKeyboard(etText);
     }
@@ -201,12 +207,14 @@ public class EditBridgeActivity extends AppCompatActivity {
     }
 
     public void cancelEditText(View view) {
+        rbNavBack.setVisibility(View.VISIBLE);
         rlEditText.setVisibility(View.GONE);
         Util.hideKeyboard(etText);
     }
 
     public void finishEditText(View view) {
         Util.hideKeyboard(etText);
+        rbNavBack.setVisibility(View.VISIBLE);
         rlEditText.setVisibility(View.GONE);
         String text = etText.getText().toString();
         etText.setText("");

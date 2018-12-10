@@ -43,7 +43,7 @@ public class GlideImageLoader {
                 .placeholder(defaultResId);
 
         if (width > 0 && height > 0) {
-            options.override(width, height);
+            options = options.override(width, height);
         }
 
         RequestBuilder<Bitmap> builder = Glide.with(imageView.getContext())

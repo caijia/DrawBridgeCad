@@ -99,6 +99,8 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
     private Matrix parentInsertMatrix = new Matrix();
     private float minTextRectWidth;
 
+    private int circleAccentColor;
+    private int textBoundsColor;
     public DrawTextComponent(View parentView, String text, float textSize) {
         this.text = text;
         this.textSize = textSize;
@@ -110,7 +112,9 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         paint.setStrokeWidth(dpToPx(1));
         radius = (int) dpToPx(12);
         minTextRectWidth = dpToPx(100);
-        circleIconColor = Color.parseColor("#ddffffff");
+        circleIconColor = Color.parseColor("#7b000000");
+        circleAccentColor = Color.parseColor("#eeeeee");
+        textBoundsColor = Color.parseColor("#999999");
         moveGestureDetector = new MoveGestureDetector(context, this);
     }
 
@@ -171,7 +175,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
                 centerY + bounds[1] / 2);
         textRect.inset(-radius, -radius);
         savePaintParams(paint);
-        paint.setColor(Color.GRAY);
+        paint.setColor(textBoundsColor);
         paint.setStyle(Paint.Style.STROKE);
         if (!showTextDecoration) {
             paint.setColor(Color.TRANSPARENT);
@@ -222,7 +226,7 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         //绘制关闭图标的X
         savePaintParams(paint);
         paint.setStrokeWidth(paint.getStrokeWidth());
-        paint.setColor(Color.GRAY);
+        paint.setColor(circleAccentColor);
         if (!showTextDecoration) {
             paint.setColor(Color.TRANSPARENT);
         }
@@ -280,12 +284,12 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
         restorePaintParams(paint);
 
         savePaintParams(paint);
-        paint.setColor(Color.GRAY);
+        paint.setColor(circleAccentColor);
         paint.setStrokeWidth(paint.getStrokeWidth());
         if (!showTextDecoration) {
             paint.setColor(Color.TRANSPARENT);
         }
-        int arrowWidth = (int) (radius / 2);
+        int arrowWidth = radius / 2;
         float radiusSin45 = (float) (Math.sin(Math.toRadians(45)) * (radius - spacing));
         float left = mapRight - radiusSin45;
         float top = mapBottom - radiusSin45;
@@ -435,7 +439,8 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
      * @return true 包含
      */
     public boolean contains(float x, float y) {
-        float[] points = mapPoint(x, y);
+        float[] point = getMapPointFromParentMatrix(x, y);
+        float[] points = mapPoint(point[0], point[1]);
         float mapX = points[0];
         float mapY = points[1];
         return getTextLfRect().contains(mapX, mapY) || getTextRbRect().contains(mapX, mapY) ||
@@ -497,7 +502,6 @@ public class DrawTextComponent implements MoveGestureDetector.OnMoveGestureListe
     }
 
     public interface OnCloseTextComponentListener {
-
         void closeTextComponent();
     }
 
