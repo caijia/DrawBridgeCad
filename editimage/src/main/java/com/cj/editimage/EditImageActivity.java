@@ -24,21 +24,21 @@ import com.cj.editimage.widget.ProgressDialog;
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.lang.ref.WeakReference;
 
 
 public class EditImageActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String EXTRA_IMAGE_PATH = "extra:imagePath";
 
-    Toolbar toolbar;
-    EditImageView editImageView;
+    private EditImageView editImageView;
     private String imagePath;
 
     private RadioButton rbLine;
     private RadioButton rbOval;
     private RadioButton rbRect;
     private RadioButton rbCancel;
-    private InternalHandle handler = new InternalHandle();
+    private InternalHandle handler;
     private ProgressDialog progressDialog;
 
     public static Intent getIntent(Context context, String imagePath) {
@@ -60,8 +60,10 @@ public class EditImageActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_image);
+        handler = new InternalHandle(this);
+
         Util.setTranslucentStatus(this);
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         editImageView = findViewById(R.id.edit_image_view);
         rbLine = findViewById(R.id.btn_line);
         rbOval = findViewById(R.id.btn_oval);
@@ -94,10 +96,6 @@ public class EditImageActivity extends AppCompatActivity implements View.OnClick
             return false;
         });
         return super.onCreateOptionsMenu(menu);
-    }
-
-    private void superBackPressed() {
-        super.onBackPressed();
     }
 
     @SuppressLint("CheckResult")
@@ -190,16 +188,29 @@ public class EditImageActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-    private class InternalHandle extends Handler {
+    private void completeSaveBitmap() {
+        if (progressDialog != null) {
+            progressDialog.dismissAllowingStateLoss();
+        }
+        setResult(RESULT_OK);
+        super.onBackPressed();
+    }
+
+    private static class InternalHandle extends Handler {
+
+        private WeakReference<EditImageActivity> ref;
+
+        InternalHandle(EditImageActivity activity) {
+            ref = new WeakReference<>(activity);
+        }
+
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 200:
-                    if (progressDialog != null) {
-                        progressDialog.dismissAllowingStateLoss();
+                    if (ref.get() != null) {
+                        ref.get().completeSaveBitmap();
                     }
-                    setResult(RESULT_OK);
-                    superBackPressed();
                     break;
             }
         }

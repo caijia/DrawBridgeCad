@@ -9,11 +9,13 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import com.cj.drawbridge.EditBridgeActivity;
 import com.cj.drawbridge.dialog.BridgePictureListDialog;
+import com.cj.editimage.EditImageActivity;
 
 import java.io.File;
 
@@ -49,6 +51,12 @@ public class OtherActivity extends AppCompatActivity {
             dialog.dismissAllowingStateLoss();
         });
         dialog.show(getSupportFragmentManager(), "");
+    }
+
+    public void editImage1(View view) {
+        Intent i = EditImageActivity.getIntent(this,
+                Environment.getExternalStorageDirectory() + "/cai.jpg");
+        startActivity(i);
     }
 
     @Override

@@ -16,7 +16,7 @@ public class ProgressDialog extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(STYLE_NORMAL, R.style.customDialog);
+        setStyle(STYLE_NORMAL, R.style.EditImageLib_Dialog);
     }
 
     @Nullable
