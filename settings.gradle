@@ -1,1 +1,1 @@
-include ':app', ':drawbridge', ':editimage'
+include ':app', ':drawbridge'
