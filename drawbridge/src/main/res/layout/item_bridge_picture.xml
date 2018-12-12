@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:background="@color/white"
+    android:background="?selectableItemBackground"
     android:orientation="vertical">
 
     <FrameLayout
@@ -18,12 +18,6 @@
             android:layout_gravity="center"
             android:adjustViewBounds="true"
             android:src="@drawable/icon_bridge_4" />
-
-        <View
-            android:id="@+id/v_click"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?selectableItemBackgroundBorderless" />
 
     </FrameLayout>
 </LinearLayout>

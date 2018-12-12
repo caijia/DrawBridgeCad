@@ -62,7 +62,7 @@ public class GlideImageLoader {
     }
 
     public void loadImage(String url, ImageView imageView) {
-        loadImage(url, imageView, R.drawable.shape_black);
+        loadImage(url, imageView, R.drawable.shape_white);
     }
 
     public void loadImage(String url, ImageView imageView, @DrawableRes int defaultResId) {

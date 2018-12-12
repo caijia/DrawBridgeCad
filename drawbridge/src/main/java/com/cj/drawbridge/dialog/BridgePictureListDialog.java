@@ -175,10 +175,10 @@ public class BridgePictureListDialog extends BottomSheetDialogFragment {
                 params.width = params.height = Util.getScreenWidth(getContext()) / SPAN_COUNT;
 
                 GlideImageLoader.getInstance().loadImage(holder.ivBridge, bridgeImage.imageRes,
-                        R.drawable.shape_black, params.width, params.height);
+                        R.drawable.shape_white, params.width, params.height);
 
                 holder.setExtra(bridgeImage);
-                holder.vClick.setOnClickListener(holder);
+                holder.itemView.setOnClickListener(holder);
             }
         }
 
@@ -209,13 +209,11 @@ public class BridgePictureListDialog extends BottomSheetDialogFragment {
             private ImageView ivBridge;
             private BridgeImage bridgeImage;
             private FrameLayout flImageContainer;
-            private View vClick;
 
             public BridgeImageVH(@NonNull View itemView) {
                 super(itemView);
                 ivBridge = itemView.findViewById(R.id.iv_bridge);
                 flImageContainer = itemView.findViewById(R.id.fl_image_container);
-                vClick = itemView.findViewById(R.id.v_click);
             }
 
             @Override
