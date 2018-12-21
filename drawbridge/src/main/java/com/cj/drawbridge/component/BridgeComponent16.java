@@ -101,9 +101,9 @@ public class BridgeComponent16 extends BaseBridgeComponent {
             if (i >= 0 && i < hanJieArray.length) {
                 String bottomText;
                 if (hanTai < 0) {
-                    bottomText = direction + i;
+                    bottomText = direction + (i + 1);
                 } else {
-                    bottomText = direction + hanTai + "-" + i;
+                    bottomText = direction + hanTai + "-" + (i + 1);
                 }
                 drawText(canvas, Paint.Align.CENTER, bottomText,
                         rectStartX + incrementWidth + hanJieArray[i] * wScale / 2,
