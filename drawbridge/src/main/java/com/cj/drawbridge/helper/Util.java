@@ -38,6 +38,26 @@ public class Util {
         return s;
     }
 
+    public static int parseInt(String s, int defaultValue) {
+        int value = defaultValue;
+        try {
+            value = Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    public static float parseFloat(String s, float defaultValue) {
+        float value = defaultValue;
+        try {
+            value = Float.parseFloat(s);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
     public static void saveBitmap(Bitmap bitmap, String imagePath) {
         if (bitmap == null || TextUtils.isEmpty(imagePath)) {
             return;

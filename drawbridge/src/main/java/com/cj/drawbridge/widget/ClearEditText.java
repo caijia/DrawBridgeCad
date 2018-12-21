@@ -105,16 +105,16 @@ public class ClearEditText extends AppCompatEditText implements
         }
     }
 
-    @Override
-    protected void onSelectionChanged(int selStart, int selEnd) {
-        super.onSelectionChanged(selStart, selEnd);
-        //保证光标始终在最后面
-        if (selStart == selEnd) {//防止不能多选
-            if (getText() != null) {
-                setSelection(getText().length());
-            }
-        }
-    }
+//    @Override
+//    protected void onSelectionChanged(int selStart, int selEnd) {
+//        super.onSelectionChanged(selStart, selEnd);
+//        //保证光标始终在最后面
+//        if (selStart == selEnd) {//防止不能多选
+//            if (getText() != null) {
+//                setSelection(getText().length());
+//            }
+//        }
+//    }
 
 
     /**

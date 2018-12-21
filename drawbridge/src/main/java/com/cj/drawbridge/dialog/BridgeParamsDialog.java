@@ -35,6 +35,8 @@ public class BridgeParamsDialog extends DialogFragment {
     private RelativeLayout rlDunshu;
     private RelativeLayout rlDirection;
     private RelativeLayout rlUnit;
+    private RelativeLayout rlHanJie;
+    private RelativeLayout rlHanTai;
     private EditText etLength;
     private EditText etWidth;
     private EditText etDiban;
@@ -43,6 +45,8 @@ public class BridgeParamsDialog extends DialogFragment {
     private EditText etZuodun;
     private EditText etYoudun;
     private EditText etDunshu;
+    private EditText etHanJie;
+    private EditText etHanTai;
     private RadioButton rbLeft;
     private RadioButton rbRight;
     private RadioButton rbCm;
@@ -81,6 +85,8 @@ public class BridgeParamsDialog extends DialogFragment {
         rlDunshu.setVisibility(bridgeParams.getDunShu() < 0 ? View.GONE : View.VISIBLE);
         rlDirection.setVisibility(TextUtils.isEmpty(bridgeParams.getDirection()) ? View.GONE : View.VISIBLE);
         rlUnit.setVisibility(TextUtils.isEmpty(bridgeParams.getUnit()) ? View.GONE : View.VISIBLE);
+        rlHanJie.setVisibility(bridgeParams.getHanJieArray() == null ? View.GONE : View.VISIBLE);
+        rlHanTai.setVisibility(bridgeParams.getHanTai() < 0 ? View.GONE : View.VISIBLE);
 
         etLength.setText(Util.removeZero(bridgeParams.getLength()));
         etWidth.setText(Util.removeZero(bridgeParams.getWidth()));
@@ -90,6 +96,8 @@ public class BridgeParamsDialog extends DialogFragment {
         etZuodun.setText(String.valueOf(bridgeParams.getZuoDun()));
         etYoudun.setText(String.valueOf(bridgeParams.getYouDun()));
         etDunshu.setText(String.valueOf(bridgeParams.getDunShu()));
+        etHanTai.setText(String.valueOf(bridgeParams.getHanTai()));
+        etHanJie.setText(getHanJie(bridgeParams.getHanJieArray()));
 
         String direction = bridgeParams.getDirection();
         if (!TextUtils.isEmpty(direction)) {
@@ -116,7 +124,21 @@ public class BridgeParamsDialog extends DialogFragment {
                     break;
             }
         }
+    }
 
+    private String getHanJie(float[] hanJies) {
+        if (hanJies == null) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (float hanJie : hanJies) {
+            if (sb.length() > 0) {
+                sb.append(",");
+            }
+            sb.append(Util.removeZero(hanJie));
+        }
+        return sb.toString();
     }
 
     @Override
@@ -141,6 +163,8 @@ public class BridgeParamsDialog extends DialogFragment {
         rlDunshu = view.findViewById(R.id.rl_dunshu);
         rlDirection = view.findViewById(R.id.rl_direction);
         rlUnit = view.findViewById(R.id.rl_unit);
+        rlHanJie = view.findViewById(R.id.rl_hanjie);
+        rlHanTai = view.findViewById(R.id.rl_hantai);
 
         etLength = view.findViewById(R.id.et_length);
         etWidth = view.findViewById(R.id.et_width);
@@ -150,6 +174,8 @@ public class BridgeParamsDialog extends DialogFragment {
         etZuodun = view.findViewById(R.id.et_zuodun);
         etYoudun = view.findViewById(R.id.et_youdun);
         etDunshu = view.findViewById(R.id.et_dunshu);
+        etHanJie = view.findViewById(R.id.et_hanjie);
+        etHanTai = view.findViewById(R.id.et_hantai);
 
         rbLeft = view.findViewById(R.id.rb_left);
         rbRight = view.findViewById(R.id.rb_right);
@@ -191,6 +217,24 @@ public class BridgeParamsDialog extends DialogFragment {
         String dunShu = checkParams(etDunshu, rlDunshu, "请输入墩数");
         if (dunShu == null) return;
 
+        String hanJies = checkParams(etHanJie, rlHanJie, "请输入涵节");
+        if (hanJies == null) return;
+        boolean hasSplit = hanJies.contains(",") || hanJies.contains("，");
+        if (hasSplit && !validateHanJie(hanJies)) {
+            ToastManager.getInstance(getContext()).showToast("多个涵节必须用逗号分割,涵节长度必须大于0");
+            return;
+        }
+
+        if (!hasSplit) {
+            if (Util.parseInt(hanJies, -1) < 0) {
+                ToastManager.getInstance(getContext()).showToast("涵节长度必须大于0");
+            }
+            return;
+        }
+
+        String hanTai = checkParams(etHanTai, rlHanTai, "请输入涵台");
+        if (hanTai == null) return;
+
         String direction = rbLeft.isChecked()
                 ? Constants.BRIDGE_L
                 : rbRight.isChecked() ? Constants.BRIDGE_R : "";
@@ -209,12 +253,33 @@ public class BridgeParamsDialog extends DialogFragment {
         bridgeParams.setDunShu(TextUtils.isEmpty(dunShu) ? -1 : Integer.parseInt(dunShu));
         bridgeParams.setDirection(direction);
         bridgeParams.setUnit(unit);
+        bridgeParams.setHanJieArray(getHanJieArray(hanJies));
 
         if (onChangeBridgeParamsListener != null) {
             onChangeBridgeParamsListener.onChangeBridgeParams(bridgeParams);
         }
 
         dismissAllowingStateLoss();
+    }
+
+    private float[] getHanJieArray(String hanJies) {
+        String[] hanJie = hanJies.split("[,，]");
+        float[] floats = new float[hanJie.length];
+        for (int i = 0; i < hanJie.length; i++) {
+            floats[i] = Util.parseFloat(hanJie[i], -1);
+        }
+        return floats;
+    }
+
+    private boolean validateHanJie(String hanJies) {
+        String[] hanJie = hanJies.split("[,，]");
+        boolean validate = true;
+        for (String s : hanJie) {
+            if (Util.parseFloat(s, -1) < 0) {
+                validate = false;
+            }
+        }
+        return validate;
     }
 
     @Nullable

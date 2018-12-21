@@ -3,6 +3,7 @@ package com.cj.drawbridge.component;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PathEffect;
 import android.graphics.Rect;
 import android.util.TypedValue;
 
@@ -49,6 +50,7 @@ public abstract class BaseBridgeComponent {
         paint.setTextSize(paintParams.textSize);
         paint.setStyle(paintParams.style);
         paint.setTextAlign(paintParams.textAlign);
+        paint.setPathEffect(paintParams.pathEffect);
     }
 
     public void savePaintParams(Paint paint) {
@@ -57,6 +59,7 @@ public abstract class BaseBridgeComponent {
         paintParams.textSize = paint.getTextSize();
         paintParams.style = paint.getStyle();
         paintParams.textAlign = paint.getTextAlign();
+        paintParams.pathEffect = paint.getPathEffect();
     }
 
     public int[] getTextBounds(String text, Paint paint) {
@@ -113,5 +116,6 @@ public abstract class BaseBridgeComponent {
         float textSize;
         Paint.Style style;
         Paint.Align textAlign;
+        PathEffect pathEffect;
     }
 }

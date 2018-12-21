@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cj.drawbridge.R;
+import com.cj.drawbridge.constants.Constants;
 import com.cj.drawbridge.helper.GlideImageLoader;
 import com.cj.drawbridge.helper.Util;
 
@@ -46,8 +47,42 @@ public class BridgePictureListDialog extends BottomSheetDialogFragment {
             "空心板、实心板", "横隔板"
     };
 
+    public static final int TYPE_BRIDGE = 4;
+    public static final int TYPE_CULVERT = 5;
+    private static final int[] IMAGE_RES_ARRAY_CULVERT = {
+            R.drawable.icon_culvert_1, R.drawable.icon_culvert_2
+    };
+    private static final int[] IMAGE_ORDER_ARRAY_CULVERT = {
+            1, 2
+    };
+
     private static final int SPAN_COUNT = 3;
+    private static final int[] CULVERT_TYPE = {
+            Constants.CULVERT_TYPE_1, Constants.CULVERT_TYPE_2
+    };
+    private static final String[] IMAGE_TITLES_CULVERT = {
+            "台身", "顶板"
+    };
+    private static final String EXTRA_TYPE = "extra:type";
     private OnClickBridgeListener onClickBridgeListener;
+    private int type;
+
+    public static BridgePictureListDialog getInstance(int type) {
+        BridgePictureListDialog f = new BridgePictureListDialog();
+        Bundle args = new Bundle();
+        args.putInt(EXTRA_TYPE, type);
+        f.setArguments(args);
+        return f;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            type = args.getInt(EXTRA_TYPE);
+        }
+    }
 
     @Nullable
     @Override
@@ -57,14 +92,31 @@ public class BridgePictureListDialog extends BottomSheetDialogFragment {
                 false);
     }
 
-    private List<BridgeImage> getData() {
+    private List<BridgeImage> getData(int type) {
         List<BridgeImage> list = new ArrayList<>();
-        int length = IMAGE_RES_ARRAY.length;
-        for (int i = 0; i < length; i++) {
-            BridgeImage image = new BridgeImage(IMAGE_RES_ARRAY[i], IMAGE_ORDER_ARRAY[i],
-                    i + 1, IMAGE_TITLES[i]);
-            list.add(image);
+        switch (type) {
+            case TYPE_BRIDGE: {
+                int length = IMAGE_RES_ARRAY.length;
+                for (int i = 0; i < length; i++) {
+                    BridgeImage image = new BridgeImage(IMAGE_RES_ARRAY[i], IMAGE_ORDER_ARRAY[i],
+                            i + 1, IMAGE_TITLES[i]);
+                    list.add(image);
+                }
+                break;
+            }
+
+            case TYPE_CULVERT: {
+                int length = IMAGE_RES_ARRAY_CULVERT.length;
+                for (int i = 0; i < length; i++) {
+                    BridgeImage image = new BridgeImage(IMAGE_RES_ARRAY_CULVERT[i],
+                            IMAGE_ORDER_ARRAY_CULVERT[i],
+                            CULVERT_TYPE[i], IMAGE_TITLES_CULVERT[i]);
+                    list.add(image);
+                }
+                break;
+            }
         }
+
         Collections.sort(list, (o1, o2) -> o1.order - o2.order);
 
         //分组
@@ -91,7 +143,7 @@ public class BridgePictureListDialog extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
-        List<BridgeImage> bridgeImageList = getData();
+        List<BridgeImage> bridgeImageList = getData(type);
         BridgeImageAdapter adapter = new BridgeImageAdapter(bridgeImageList);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), SPAN_COUNT);
         final GridLayoutManager.SpanSizeLookup spanSizeLookup = gridLayoutManager.getSpanSizeLookup();

@@ -36,6 +36,8 @@ import com.cj.drawbridge.widget.BridgeView6;
 import com.cj.drawbridge.widget.BridgeView7;
 import com.cj.drawbridge.widget.BridgeView8;
 import com.cj.drawbridge.widget.BridgeView9;
+import com.cj.drawbridge.widget.CulvertView1;
+import com.cj.drawbridge.widget.CulvertView2;
 
 
 public class EditBridgeActivity extends AppCompatActivity {
@@ -49,6 +51,8 @@ public class EditBridgeActivity extends AppCompatActivity {
     private RadioButton rbMove;
     private int bridgeType;
     private String saveFilePath;
+    private RadioButton rbNavBack;
+    private RadioButton rbDrawText;
 
     public static Intent getIntent(Context context, String saveFilePath, int bridgeType) {
         Intent i = new Intent(context, EditBridgeActivity.class);
@@ -140,14 +144,27 @@ public class EditBridgeActivity extends AppCompatActivity {
             case Constants.BRIDGE_TYPE_18:
                 bridgeView = new BridgeView18(this);
                 break;
+
+            case Constants.BRIDGE_TYPE_19:
+                bridgeView = new BridgeView13(this);
+                break;
+
+            case Constants.CULVERT_TYPE_1:
+                bridgeView = new CulvertView1(this);
+                break;
+
+            case Constants.CULVERT_TYPE_2:
+                bridgeView = new CulvertView2(this);
+                break;
         }
-        flBridgeViewContainer.removeAllViews();
-        flBridgeViewContainer.addView(bridgeView, ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
+
+        if (bridgeView != null) {
+            flBridgeViewContainer.removeAllViews();
+            flBridgeViewContainer.addView(bridgeView, ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+        }
     }
 
-    private RadioButton rbNavBack;
-    private RadioButton rbDrawText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

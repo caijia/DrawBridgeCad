@@ -17,6 +17,8 @@ public class BridgeParams implements Serializable {
     private int dunShu;
     private String direction;
     private String unit;
+    private float[] hanJieArray; //涵节
+    private int hanTai;
 
     public BridgeParams() {
         length = -1;
@@ -27,7 +29,24 @@ public class BridgeParams implements Serializable {
         zuoDun = -1;
         youDun = -1;
         dunShu = -1;
+        hanTai = -1;
         unit = Constants.UNIT_M;
+    }
+
+    public float[] getHanJieArray() {
+        return hanJieArray;
+    }
+
+    public void setHanJieArray(float[] hanJieArray) {
+        this.hanJieArray = hanJieArray;
+    }
+
+    public int getHanTai() {
+        return hanTai;
+    }
+
+    public void setHanTai(int hanTai) {
+        this.hanTai = hanTai;
     }
 
     public float getLength() {

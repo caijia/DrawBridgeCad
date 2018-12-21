@@ -20,6 +20,9 @@ public interface Constants {
     int BRIDGE_TYPE_16 = 16;
     int BRIDGE_TYPE_17 = 17;
     int BRIDGE_TYPE_18 = 18;
+    int BRIDGE_TYPE_19 = 19;
+    int CULVERT_TYPE_1 = 121;
+    int CULVERT_TYPE_2 = 122;
 
     String BRIDGE_L = "L";
     String BRIDGE_R = "R";

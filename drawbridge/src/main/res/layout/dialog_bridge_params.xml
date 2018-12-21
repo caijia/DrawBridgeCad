@@ -295,6 +295,75 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/rl_hanjie"
+            android:layout_width="match_parent"
+            android:layout_height="42dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="12dp"
+                android:text="涵节(用逗号分割)"
+                android:textColor="@color/color_333333"
+                android:textSize="14sp" />
+
+            <com.cj.drawbridge.widget.ClearEditText
+                android:id="@+id/et_hanjie"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="12dp"
+                android:background="@null"
+                android:gravity="right|center_vertical"
+                android:hint="请输入"
+                android:imeOptions="flagNoExtractUi"
+                android:textColor="@color/color_333333"
+                android:textColorHint="@color/color_hint"
+                android:textSize="14sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/color_efefef" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_hantai"
+            android:layout_width="match_parent"
+            android:layout_height="42dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="12dp"
+                android:text="涵台"
+                android:textColor="@color/color_333333"
+                android:textSize="14sp" />
+
+            <com.cj.drawbridge.widget.ClearEditText
+                android:id="@+id/et_hantai"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="12dp"
+                android:background="@null"
+                android:gravity="right|center_vertical"
+                android:hint="请输入"
+                android:imeOptions="flagNoExtractUi"
+                android:inputType="number"
+                android:textColor="@color/color_333333"
+                android:textColorHint="@color/color_hint"
+                android:textSize="14sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/color_efefef" />
+        </RelativeLayout>
+
+        <RelativeLayout
             android:id="@+id/rl_direction"
             android:layout_width="match_parent"
             android:layout_height="42dp">
