@@ -241,7 +241,7 @@ public class EditBridgeActivity extends AppCompatActivity {
     }
 
     public void edit(View view) {
-        BridgeParamsDialog dialog = BridgeParamsDialog.getInstance(bridgeView.getBridgeParams());
+        BridgeParamsDialog dialog = BridgeParamsDialog.getInstance(bridgeView.getBridgeParams(), bridgeType);
         dialog.setOnChangeBridgeParamsListener(params -> bridgeView.applyBridgeParams(params));
         dialog.show(getSupportFragmentManager(), "edit");
     }

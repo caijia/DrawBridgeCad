@@ -24,6 +24,7 @@ import com.cj.drawbridge.helper.Util;
 public class BridgeParamsDialog extends DialogFragment {
 
     private static final String EXTRA_PARAMS = "extra:params";
+    private static final String BRIDGE_TYPE = "extra:bridgeType";
     private BridgeParams bridgeParams;
     private RelativeLayout rlLength;
     private RelativeLayout rlWidth;
@@ -52,12 +53,14 @@ public class BridgeParamsDialog extends DialogFragment {
     private RadioButton rbCm;
     private RadioButton rbM;
     private TextView tvApply;
+    private int bridgeType;
     private OnChangeBridgeParamsListener onChangeBridgeParamsListener;
 
-    public static BridgeParamsDialog getInstance(BridgeParams params) {
+    public static BridgeParamsDialog getInstance(BridgeParams params, int bridgeType) {
         BridgeParamsDialog f = new BridgeParamsDialog();
         Bundle args = new Bundle();
         args.putSerializable(EXTRA_PARAMS, params);
+        args.putInt(BRIDGE_TYPE, bridgeType);
         f.setArguments(args);
         return f;
     }
@@ -68,6 +71,7 @@ public class BridgeParamsDialog extends DialogFragment {
             return;
         }
         bridgeParams = (BridgeParams) args.getSerializable(EXTRA_PARAMS);
+        bridgeType = args.getInt(BRIDGE_TYPE);
     }
 
     private void setViewState() {
@@ -217,23 +221,28 @@ public class BridgeParamsDialog extends DialogFragment {
         String dunShu = checkParams(etDunshu, rlDunshu, "请输入墩数");
         if (dunShu == null) return;
 
-        String hanJies = checkParams(etHanJie, rlHanJie, "请输入涵节");
-        if (hanJies == null) return;
-        boolean hasSplit = hanJies.contains(",") || hanJies.contains("，");
-        if (hasSplit && !validateHanJie(hanJies)) {
-            ToastManager.getInstance(getContext()).showToast("多个涵节必须用逗号分割,涵节长度必须大于0");
-            return;
-        }
 
-        if (!hasSplit) {
-            if (Util.parseInt(hanJies, -1) < 0) {
-                ToastManager.getInstance(getContext()).showToast("涵节长度必须大于0");
+        String hanJies = "";
+        if (bridgeType == Constants.CULVERT_TYPE_1 ||
+                bridgeType == Constants.CULVERT_TYPE_2) {
+            hanJies = checkParams(etHanJie, rlHanJie, "请输入涵节");
+            if (hanJies == null) return;
+            boolean hasSplit = hanJies.contains(",") || hanJies.contains("，");
+            if (hasSplit && !validateHanJie(hanJies)) {
+                ToastManager.getInstance(getContext()).showToast("多个涵节必须用逗号分割,涵节长度必须大于0");
+                return;
             }
-            return;
-        }
 
-        String hanTai = checkParams(etHanTai, rlHanTai, "请输入涵台");
-        if (hanTai == null) return;
+            if (!hasSplit) {
+                if (Util.parseInt(hanJies, -1) < 0) {
+                    ToastManager.getInstance(getContext()).showToast("涵节长度必须大于0");
+                }
+                return;
+            }
+
+            String hanTai = checkParams(etHanTai, rlHanTai, "请输入涵台");
+            if (hanTai == null) return;
+        }
 
         String direction = rbLeft.isChecked()
                 ? Constants.BRIDGE_L
